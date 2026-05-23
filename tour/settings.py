@@ -1,7 +1,7 @@
 """Runtime settings for the tour CLI.
 
 Reads from environment variables (and `.env` if present). Add new knobs here as
-the CLI grows — keep this module dependency-light so the menu can construct a
+the CLI grows - keep this module dependency-light so the menu can construct a
 Settings instance instantly.
 """
 

@@ -1,4 +1,4 @@
-"""tour CLI entrypoint — referenced by `[project.scripts] tour` in pyproject.
+"""tour CLI entrypoint - referenced by `[project.scripts] tour` in pyproject.
 
 Dispatches to the menu loop. Heavy demo imports are deferred via
 `menu.resolve_runner` so the menu always opens fast.

@@ -1,25 +1,25 @@
 /*-- scss:defaults --*/
 
 // =============================================================================
-// Singularity — deep-space / hacker-terminal theme for Reveal.js + Quarto.
+// Singularity - deep-space / hacker-terminal theme for Reveal.js + Quarto.
 // Palette and usage rules live in ai/plan.md §3. Don't introduce new colors or
 // fonts here without updating that section.
 // =============================================================================
 
-// Backgrounds — near-black indigo, progressively lighter
+// Backgrounds - near-black indigo, progressively lighter
 $void-bg0:        #08080F;  // deepest background (slide canvas)
 $void-bg1:        #12132A;  // surfaces, code-block bg
 $void-bg2:        #1F2147;  // panels, callouts
 $void-bg3:        #2C2F5E;  // borders, dividers
 
-// Foreground — soft lavender-white, fading down to muted
+// Foreground - soft lavender-white, fading down to muted
 $void-fg0:        #F5F6FF;  // bright text, hero titles
 $void-fg1:        #D8DBF5;  // body text
 $void-fg2:        #A6ACD9;  // secondary text
 $void-fg3:        #6E74A8;  // muted / captions
 $void-fg4:        #4A4F7A;  // disabled, faint chrome
 
-// Accents — neon
+// Accents - neon
 $void-cyan:       #38F8F2;
 $void-magenta:    #FF4FCB;
 $void-violet:     #9B5CFF;
@@ -52,10 +52,23 @@ $code-block-border-color:     $void-bg2;
 /*-- scss:rules --*/
 
 // -----------------------------------------------------------------------------
-// Base canvas
+// Cosmos background - faint starfield + soft nebulae layered behind every
+// slide. The SVG is partially transparent; void-bg0 shows through. Pinned to
+// the viewport so it doesn't scroll with content but does scale with zoom.
 // -----------------------------------------------------------------------------
-.reveal {
+.reveal-viewport {
   background-color: $void-bg0;
+  background-image: url('assets/img/cosmos.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+// Slide canvases stay transparent so the cosmos shows through. Per-slide
+// background colors set via `{background-color="..."}` still take precedence.
+.reveal {
+  background: transparent;
   color: $void-fg1;
 }
 
@@ -65,6 +78,11 @@ $code-block-border-color:     $void-bg2;
 
 // -----------------------------------------------------------------------------
 // Typography
+//
+// In this deck, H1 is the primary slide title (one slide per concept) and H2
+// is reserved for the down-arrow "detail" sub-slide. The .section-title and
+// .title-slide modifiers on H1 promote a slide to a section divider or the
+// cold-open card.
 // -----------------------------------------------------------------------------
 .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5 {
   font-family: $presentation-heading-font;
@@ -73,21 +91,36 @@ $code-block-border-color:     $void-bg2;
   text-transform: none;
 }
 
-// H1 is reserved for the title slide; violet, slightly wider tracked.
+// H1 default = normal slide title (cyan, terminal hacker feel).
 .reveal h1 {
-  color: $void-violet;
-  letter-spacing: 0.02em;
+  color: $void-cyan;
+  font-size: 1.7em;
+  margin-bottom: 0.35em;
 }
 
-.reveal h2 { color: $void-cyan; }
-.reveal h3 { color: $void-magenta; font-weight: 600; }
+// H2 = the down-arrow detail slide title. Magenta and a touch smaller so the
+// speaker (and any audience who hits down-arrow) feels they've stepped sideways
+// into reference material.
+.reveal h2 {
+  color: $void-magenta;
+  font-size: 1.25em;
+  margin-bottom: 0.4em;
+}
+
+.reveal h3 {
+  color: $void-fg2;
+  font-weight: 600;
+  font-size: 1.05em;
+}
+
 .reveal h4 { color: $void-fg2; font-weight: 600; }
 
 // -----------------------------------------------------------------------------
-// Inline utilities (used as Pandoc spans: e.g. `[text]{.muted}`)
+// Inline utilities (Pandoc spans: `[text]{.muted}`)
 // -----------------------------------------------------------------------------
 .muted          { color: $void-fg3; }
 .faint          { color: $void-fg4; }
+.body           { color: $void-fg1; display: block; margin: 0.6em 0; }
 .accent-cyan    { color: $void-cyan; }
 .accent-magenta { color: $void-magenta; }
 .accent-violet  { color: $void-violet; }
@@ -96,6 +129,16 @@ $code-block-border-color:     $void-bg2;
 .accent-red     { color: $void-red; }
 .footer         { font-size: 0.7em; color: $void-fg3; }
 .center         { text-align: center; }
+
+// "More detail in the slide below" cue. Cyan, small, italic.
+.detail-hint {
+  display: block;
+  margin-top: 1.2em;
+  color: $void-cyan;
+  font-size: 0.7em;
+  font-style: italic;
+  opacity: 0.8;
+}
 
 // -----------------------------------------------------------------------------
 // Links
@@ -146,12 +189,13 @@ $code-block-border-color:     $void-bg2;
 .reveal li::marker { color: $void-magenta; }
 
 .reveal blockquote {
-  background: $void-bg1;
+  background: rgba(18, 19, 42, 0.78);
   border-left: 3px solid $void-magenta;
   padding: 0.6em 1em;
   color: $void-fg2;
   font-style: normal;
   box-shadow: none;
+  backdrop-filter: blur(2px);
 }
 
 // -----------------------------------------------------------------------------
@@ -173,41 +217,89 @@ $code-block-border-color:     $void-bg2;
 }
 
 // -----------------------------------------------------------------------------
-// Section-title / break / gag cards
+// Section-title slide modifier - magenta accent rule and violet heading.
 // -----------------------------------------------------------------------------
-// Apply by adding `{.section-title}` or `{background-color="#12132A"}` to the
-// slide header in slides.qmd. The left magenta rule + bg1 fill is the visual
-// signature of major section breaks.
 .reveal section.section-title {
-  background-color: $void-bg1;
   border-left: 6px solid $void-magenta;
   padding-left: 1.2em;
 }
 
-.reveal section.section-title h1,
-.reveal section.section-title h2 {
+.reveal section.section-title h1 {
   color: $void-violet;
-  font-size: 1.6em;
+  font-size: 2em;
+  text-shadow: 0 0 14px rgba(155, 92, 255, 0.25);
 }
 
-// Gag/break cards — yoga, handstand, intermission. Centered, magenta heading.
-.reveal section.break-card {
+// -----------------------------------------------------------------------------
+// Title slide (cold open) - violet glow, centered.
+// -----------------------------------------------------------------------------
+.reveal section.title-slide,
+.reveal section.title-slide.center {
   text-align: center;
 }
-.reveal section.break-card h2 {
+.reveal section.title-slide h1,
+.reveal section.title-slide strong {
+  color: $void-violet;
+  text-shadow: 0 0 20px rgba(155, 92, 255, 0.45);
+}
+
+// -----------------------------------------------------------------------------
+// Break / gag cards - centered, magenta heading.
+// -----------------------------------------------------------------------------
+.reveal section.break-card { text-align: center; }
+.reveal section.break-card h1 {
   color: $void-magenta;
-  font-size: 2em;
+  font-size: 2.2em;
+  text-shadow: 0 0 16px rgba(255, 79, 203, 0.3);
 }
 
 // -----------------------------------------------------------------------------
-// Title slide — subtle violet glow on the H1.
+// Sponsor slides - centered, big logo with comfortable margin.
 // -----------------------------------------------------------------------------
-.reveal section.title-slide h1 {
-  text-shadow: 0 0 18px rgba(155, 92, 255, 0.35);
+.reveal section.sponsor-slide {
+  text-align: center;
+}
+.reveal section.sponsor-slide h1 {
+  color: $void-violet;
+  font-size: 1.6em;
+  margin-bottom: 0.6em;
+}
+.reveal section.sponsor-slide .body,
+.reveal section.sponsor-slide p {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reveal .sponsor-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.6em 0 1em 0;
+}
+
+.reveal .sponsor-logo {
+  max-height: 280px;
+  width: auto;
+  filter: drop-shadow(0 0 18px rgba(155, 92, 255, 0.18));
 }
 
 // -----------------------------------------------------------------------------
-// Slide number / progress / controls — pull into Singularity colors.
+// Detail slide modifier - applied to the H2 down-arrow slides under each
+// horizontal slide. Slight indent + magenta left rule so it visually reads as
+// "you stepped sideways into reference material".
+// -----------------------------------------------------------------------------
+.reveal section.detail-slide {
+  border-left: 3px solid $void-magenta;
+  padding-left: 1em;
+}
+.reveal section.detail-slide h2 {
+  color: $void-magenta;
+}
+.reveal section.detail-slide strong { color: $void-cyan; }
+
+// -----------------------------------------------------------------------------
+// Slide controls / progress
 // -----------------------------------------------------------------------------
 .reveal .slide-number { color: $void-fg3; background: transparent; }
 .reveal .progress { color: $void-cyan; height: 2px; }
@@ -218,7 +310,8 @@ $code-block-border-color:     $void-bg2;
 .reveal .controls .navigate-down.enabled { color: $void-cyan; }
 
 // -----------------------------------------------------------------------------
-// Fragments — give the focused fragment a faint cyan glow.
+// Fragments - faint cyan glow on the focused fragment. (Used sparingly per
+// the one-click rule in ai/plan.md §4.)
 // -----------------------------------------------------------------------------
 .reveal .fragment.current-fragment {
   color: $void-fg0;
@@ -226,8 +319,8 @@ $code-block-border-color:     $void-bg2;
 }
 
 // -----------------------------------------------------------------------------
-// QR code holder — used on the Discord slide. Keep the QR readable on
-// the dark canvas with a soft padded surround.
+// QR code frame - white-padded surround so the QR remains readable on the
+// dark canvas.
 // -----------------------------------------------------------------------------
 .reveal .qr-frame {
   display: inline-block;
@@ -238,7 +331,7 @@ $code-block-border-color:     $void-bg2;
 }
 
 // -----------------------------------------------------------------------------
-// Mermaid — recolor the dark theme to match Singularity.
+// Mermaid - recolor the dark theme to match Singularity.
 // -----------------------------------------------------------------------------
 .reveal .mermaid .node rect,
 .reveal .mermaid .node circle,

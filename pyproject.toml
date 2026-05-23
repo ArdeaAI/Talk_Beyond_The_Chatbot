@@ -1,7 +1,7 @@
 [project]
 name = "beyond-the-chatbot"
 version = "0.1.0"
-description = "Beyond the Chatbot — A Tour of the AI Universe. Talk + CLI scaffold."
+description = "Beyond the Chatbot - A Tour of the AI Universe. Talk + CLI scaffold."
 authors = [{ name = "John Gardner (Sinjhin)", email = "john@ardea.io" }]
 readme = "README.md"
 license = { text = "MIT" }

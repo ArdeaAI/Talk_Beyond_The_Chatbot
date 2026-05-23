@@ -21,7 +21,7 @@ async def run(settings: Settings) -> None:
     console.print()
     console.print(
         "[body]This is a placeholder. Real demos are deferred for the talk on "
-        "2026-05-23 — the menu shipped first so the repo is honest to anyone "
+        "2026-05-23 - the menu shipped first so the repo is honest to anyone "
         "who clones along.[/body]"
     )
     console.print()

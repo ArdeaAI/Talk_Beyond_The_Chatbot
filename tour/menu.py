@@ -5,7 +5,7 @@ inside a Live display. prompt_toolkit's Application + KeyBindings is the right
 primitive for keyboard-driven full-screen UIs.
 
 Demo modules are *lazy-imported* via `resolve_runner` so the menu opens
-instantly — heavy deps (numpy, torch, matplotlib, plotly) only load when their
+instantly - heavy deps (numpy, torch, matplotlib, plotly) only load when their
 demo is actually picked.
 """
 
@@ -55,7 +55,7 @@ class DemoEntry:
 
 
 # Demos are deferred for the 2026-05-23 talk. Keep one placeholder so the menu
-# renders honestly to anyone who clones — they see "TBD" rather than an empty
+# renders honestly to anyone who clones - they see "TBD" rather than an empty
 # screen. Add real entries here as demos land; the menu loop will pick them up
 # without further changes.
 DEMOS: tuple[DemoEntry, ...] = (
@@ -85,7 +85,7 @@ def resolve_runner(path: str) -> Callable[[Settings], Awaitable[None]]:
 def _render(selected_idx: int) -> FormattedText:
     """Build the formatted-text body of the menu for a given selection."""
     lines: list[tuple[str, str]] = []
-    lines.append(("class:title", "Beyond the Chatbot — Tour CLI\n"))
+    lines.append(("class:title", "Beyond the Chatbot - Tour CLI\n"))
     lines.append(
         (
             "class:subtitle",
