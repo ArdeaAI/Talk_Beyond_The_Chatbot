@@ -54,6 +54,7 @@ None of these exist yet. Implement them when scaffolding the corresponding subsy
 ## Conventions specific to this repo
 
 - **Slide content pattern** (`ai/plan.md` §4): every system/paradigm module follows **Hook → Mechanism → Why it matters → Further reading**. Metaphor first, mechanism second. Always name the math so curious viewers can search later; never apologize for skipping it.
+- **One-click rule** (`ai/plan.md` §4): one click advances to the next slide; at most one click reveals all content on a given slide. **No `::: {.incremental}` blocks and no per-item `.fragment` reveals.** If a punchline needs to land after a setup, use a single `.fragment` span that exposes everything at once. This rule exists because the previous talk repo over-used incremental reveals and the click-economy slowed the talk.
 - **Theme — "Singularity"** (`ai/plan.md` §3): deep-space / hacker-terminal palette with concrete hex values, usage rules, and typography. Don't introduce new colors or fonts without updating that section first.
 - **CLI lazy-import discipline**: heavy deps (numpy, torch, matplotlib, plotly) are never imported at module top-level. They load only inside the demo function the user selects, so the menu opens instantly. The voice-talk repo's `tour/` skeleton is the reference for this pattern.
 - **Bun is the script runner, not the bundler.** It only orchestrates `quarto preview / render / publish`. There is no JS source to build.

@@ -1,0 +1,250 @@
+/*-- scss:defaults --*/
+
+// =============================================================================
+// Singularity — deep-space / hacker-terminal theme for Reveal.js + Quarto.
+// Palette and usage rules live in ai/plan.md §3. Don't introduce new colors or
+// fonts here without updating that section.
+// =============================================================================
+
+// Backgrounds — near-black indigo, progressively lighter
+$void-bg0:        #08080F;  // deepest background (slide canvas)
+$void-bg1:        #12132A;  // surfaces, code-block bg
+$void-bg2:        #1F2147;  // panels, callouts
+$void-bg3:        #2C2F5E;  // borders, dividers
+
+// Foreground — soft lavender-white, fading down to muted
+$void-fg0:        #F5F6FF;  // bright text, hero titles
+$void-fg1:        #D8DBF5;  // body text
+$void-fg2:        #A6ACD9;  // secondary text
+$void-fg3:        #6E74A8;  // muted / captions
+$void-fg4:        #4A4F7A;  // disabled, faint chrome
+
+// Accents — neon
+$void-cyan:       #38F8F2;
+$void-magenta:    #FF4FCB;
+$void-violet:     #9B5CFF;
+$void-blue:       #4F8CFF;
+$void-green:      #A6FF4D;
+$void-amber:      #FFB347;
+$void-red:        #FF4D6D;
+
+// -----------------------------------------------------------------------------
+// Reveal.js / Quarto theme variables
+// -----------------------------------------------------------------------------
+$body-bg:                     $void-bg0;
+$body-color:                  $void-fg1;
+$presentation-heading-color:  $void-cyan;
+$presentation-heading-font:   'JetBrains Mono', 'Berkeley Mono', 'Space Grotesk',
+                              -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+$presentation-font-family:    'Inter', -apple-system, BlinkMacSystemFont,
+                              'Segoe UI', sans-serif;
+$presentation-font-size-root: 34px;
+
+$link-color:                  $void-cyan;
+$link-color-hover:            $void-magenta;
+$selection-bg:                $void-magenta;
+$selection-color:             $void-bg0;
+$code-color:                  $void-green;
+$code-bg:                     $void-bg1;
+$code-block-bg:               $void-bg1;
+$code-block-border-color:     $void-bg2;
+
+/*-- scss:rules --*/
+
+// -----------------------------------------------------------------------------
+// Base canvas
+// -----------------------------------------------------------------------------
+.reveal {
+  background-color: $void-bg0;
+  color: $void-fg1;
+}
+
+.reveal .slides section {
+  text-align: left;
+}
+
+// -----------------------------------------------------------------------------
+// Typography
+// -----------------------------------------------------------------------------
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5 {
+  font-family: $presentation-heading-font;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+// H1 is reserved for the title slide; violet, slightly wider tracked.
+.reveal h1 {
+  color: $void-violet;
+  letter-spacing: 0.02em;
+}
+
+.reveal h2 { color: $void-cyan; }
+.reveal h3 { color: $void-magenta; font-weight: 600; }
+.reveal h4 { color: $void-fg2; font-weight: 600; }
+
+// -----------------------------------------------------------------------------
+// Inline utilities (used as Pandoc spans: e.g. `[text]{.muted}`)
+// -----------------------------------------------------------------------------
+.muted          { color: $void-fg3; }
+.faint          { color: $void-fg4; }
+.accent-cyan    { color: $void-cyan; }
+.accent-magenta { color: $void-magenta; }
+.accent-violet  { color: $void-violet; }
+.accent-green   { color: $void-green; }
+.accent-amber   { color: $void-amber; }
+.accent-red     { color: $void-red; }
+.footer         { font-size: 0.7em; color: $void-fg3; }
+.center         { text-align: center; }
+
+// -----------------------------------------------------------------------------
+// Links
+// -----------------------------------------------------------------------------
+.reveal a {
+  color: $void-cyan;
+  text-decoration: none;
+  border-bottom: 1px dotted $void-cyan;
+  transition: color 120ms ease, border-color 120ms ease, text-shadow 120ms ease;
+}
+.reveal a:hover {
+  color: $void-magenta;
+  border-bottom-color: $void-magenta;
+  text-shadow: 0 0 6px rgba(255, 79, 203, 0.35);
+}
+
+// -----------------------------------------------------------------------------
+// Code
+// -----------------------------------------------------------------------------
+.reveal code {
+  color: $void-green;
+  background: $void-bg1;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95em;
+}
+
+.reveal pre {
+  background: $void-bg1;
+  border: 1px solid $void-bg2;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.reveal pre code {
+  background: transparent;
+  padding: 1em;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+// -----------------------------------------------------------------------------
+// Lists & blockquotes
+// -----------------------------------------------------------------------------
+.reveal ul, .reveal ol { color: $void-fg1; }
+.reveal li { margin: 0.25em 0; }
+.reveal li::marker { color: $void-magenta; }
+
+.reveal blockquote {
+  background: $void-bg1;
+  border-left: 3px solid $void-magenta;
+  padding: 0.6em 1em;
+  color: $void-fg2;
+  font-style: normal;
+  box-shadow: none;
+}
+
+// -----------------------------------------------------------------------------
+// Tables
+// -----------------------------------------------------------------------------
+.reveal table {
+  border-collapse: collapse;
+  color: $void-fg1;
+}
+.reveal table th {
+  color: $void-cyan;
+  border-bottom: 2px solid $void-bg3;
+  text-align: left;
+  padding: 0.4em 0.8em;
+}
+.reveal table td {
+  border-bottom: 1px solid $void-bg2;
+  padding: 0.4em 0.8em;
+}
+
+// -----------------------------------------------------------------------------
+// Section-title / break / gag cards
+// -----------------------------------------------------------------------------
+// Apply by adding `{.section-title}` or `{background-color="#12132A"}` to the
+// slide header in slides.qmd. The left magenta rule + bg1 fill is the visual
+// signature of major section breaks.
+.reveal section.section-title {
+  background-color: $void-bg1;
+  border-left: 6px solid $void-magenta;
+  padding-left: 1.2em;
+}
+
+.reveal section.section-title h1,
+.reveal section.section-title h2 {
+  color: $void-violet;
+  font-size: 1.6em;
+}
+
+// Gag/break cards — yoga, handstand, intermission. Centered, magenta heading.
+.reveal section.break-card {
+  text-align: center;
+}
+.reveal section.break-card h2 {
+  color: $void-magenta;
+  font-size: 2em;
+}
+
+// -----------------------------------------------------------------------------
+// Title slide — subtle violet glow on the H1.
+// -----------------------------------------------------------------------------
+.reveal section.title-slide h1 {
+  text-shadow: 0 0 18px rgba(155, 92, 255, 0.35);
+}
+
+// -----------------------------------------------------------------------------
+// Slide number / progress / controls — pull into Singularity colors.
+// -----------------------------------------------------------------------------
+.reveal .slide-number { color: $void-fg3; background: transparent; }
+.reveal .progress { color: $void-cyan; height: 2px; }
+.reveal .controls { color: $void-fg3; }
+.reveal .controls .navigate-left.enabled,
+.reveal .controls .navigate-right.enabled,
+.reveal .controls .navigate-up.enabled,
+.reveal .controls .navigate-down.enabled { color: $void-cyan; }
+
+// -----------------------------------------------------------------------------
+// Fragments — give the focused fragment a faint cyan glow.
+// -----------------------------------------------------------------------------
+.reveal .fragment.current-fragment {
+  color: $void-fg0;
+  text-shadow: 0 0 6px rgba(56, 248, 242, 0.25);
+}
+
+// -----------------------------------------------------------------------------
+// QR code holder — used on the Discord slide. Keep the QR readable on
+// the dark canvas with a soft padded surround.
+// -----------------------------------------------------------------------------
+.reveal .qr-frame {
+  display: inline-block;
+  padding: 1em;
+  background: $void-fg0;
+  border-radius: 12px;
+  box-shadow: 0 0 24px rgba(155, 92, 255, 0.25);
+}
+
+// -----------------------------------------------------------------------------
+// Mermaid — recolor the dark theme to match Singularity.
+// -----------------------------------------------------------------------------
+.reveal .mermaid .node rect,
+.reveal .mermaid .node circle,
+.reveal .mermaid .node polygon { fill: $void-bg2 !important; stroke: $void-bg3 !important; }
+.reveal .mermaid .node .label,
+.reveal .mermaid text { fill: $void-fg1 !important; color: $void-fg1 !important; }
+.reveal .mermaid .edgePath .path { stroke: $void-cyan !important; stroke-width: 1.5px !important; }
+.reveal .mermaid .arrowheadPath { fill: $void-cyan !important; stroke: $void-cyan !important; }
+.reveal .mermaid .cluster rect { fill: $void-bg1 !important; stroke: $void-magenta !important; }
