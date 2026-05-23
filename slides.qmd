@@ -104,33 +104,36 @@ date-format: long
 
 # AlphaGo {.smaller}
 
-> **The image.** A chess player who plays themselves a million times overnight,
-> and wakes up smarter than they were.
+[Setting the stage before the LLM era.]{.muted}
 
-[2016: beat the world's best Go player a decade before anyone expected.]{.muted}
+- **1997.** Deep Blue beats Kasparov at chess. Go is still considered out of reach.
+- **2016.** AlphaGo beats Lee Sedol 4-1. The hushed-silence moment.
+- **Move 37** *(Game 2)*. A move no human would play. Pros called it a mistake. It won the game.
+- **The recipe.** Huge corpus of human games + **Monte Carlo Tree Search** + a policy net (which moves to try) + a value net (who's winning).
+- **2017.** **AlphaZero**: no human games at all. Plays itself. Generalizes to chess and shogi. The first big **synthetic-data** story.
+- Search + learned heuristic is now in modern LLM "thinking" modes.
 
-[**Recipe:** Monte Carlo Tree Search + a policy network (which moves to consider) + a value network (who's winning) + self-play (the engine is its own training partner).]{.body}
+[full story & further reading below ↓]{.detail-hint}
 
-[The pattern of *search guided by a learned heuristic* keeps showing up. Modern LLM "thinking" modes are quietly running cousins of this loop.]{.accent-magenta}
-
-[speaker notes & further reading below ↓]{.detail-hint}
-
-## AlphaGo: speaker notes {.smaller .detail-slide}
+## The full story {.smaller .detail-slide}
 
 [↑ AlphaGo (top)]{.up-cue}
 
-- Lead with the chess image. Let it land.
-- Pause on **"wakes up smarter than they were."** Does most of the work.
-- Walk the recipe in order: MCTS → policy → value → self-play.
-- Each technical term gets one plain-English line. *Imagine playing the position a thousand times in your head, randomly...*
-- Don't apologize for skipping math.
-- Mention **AlphaZero** generalized this (chess, shogi); **MuZero** learned the rules from scratch.
-- Land the pattern: **search + learned heuristic** is in modern LLM "thinking" modes.
-- Tee up: first of four totally different stacks coming.
+We were just coming out of the **symbolic AI / "good old-fashioned AI"** era with neural networks in our toolbelt. **Chess** had been beaten by **Deep Blue in 1997**. But Go had way too big a ruleset. Subtlety, nuance, intuition. You couldn't make a computer play Go - at least not well.
+
+Then, before the GPT-2 / 2.5 / 3 craze, the stage was set by AlphaGo. The room went quiet: *"Oh... wow. If computers can do that... does that mean..?"*
+
+**How it works.** Loaded with a huge corpus of human games. It "watched" through them. **Monte Carlo Tree Search** picks candidate moves and scores them by potential value, looking far down the line.
+
+**MCTS** is just an efficient way to look at *all possible moves*, and the moves after those, and the moves after those. Like Spock evaluating ten steps ahead - with constraints. How far forward to look, how many branches to actually expand instead of ten bajillion.
+
+**Move 37 (Game 2 vs. Lee Sedol).** AlphaGo played a shoulder hit on the fifth line. Commentators immediately called it a mistake. Top pros had never seen the move in any human canon - they later estimated the probability of a strong player choosing it at *1 in 10,000*. It turned out to be the move that won the game. The room went quiet again. It's iconic now: the moment people realized something genuinely new was happening.
+
+Then **AlphaGo Zero** and **AlphaZero (2017)** threw out the human games entirely. Just played itself. Also generalized to chess and shogi. This is one of the first - and clearest - examples of **synthetic data**: the system generates its own training material and ends up stronger than any version trained on human play.
 
 [further reading below ↓]{.detail-hint}
 
-## AlphaGo: further reading {.smaller .detail-slide}
+## Further reading {.smaller .detail-slide}
 
 [↑ AlphaGo (top)]{.up-cue}
 
@@ -138,6 +141,7 @@ date-format: long
 - Silver et al., *Mastering Chess and Shogi by Self-Play* (AlphaZero). [arXiv:1712.01815](https://arxiv.org/abs/1712.01815)
 - Schrittwieser et al., *Mastering Atari, Go, chess and shogi by planning with a learned model* (MuZero). [Nature 2020](https://www.nature.com/articles/s41586-020-03051-4)
 - DeepMind, *AlphaGo* (2017 documentary).
+- [Move 37 explainer (DeepMind blog)](https://deepmind.google/discover/blog/innovations-of-alphago/)
 
 # AlphaFold {.smaller}
 
