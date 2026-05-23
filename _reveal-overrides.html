@@ -1,0 +1,84 @@
+<!--
+  Reveal config overrides that Quarto's YAML schema won't accept.
+
+  Quarto's revealjs writer hard-codes `navigationMode: 'linear'` as its default
+  in the compiled Reveal.initialize() call. That mode collapses the deck:
+  left/right traverses every slide including verticals, and up/down stops
+  working. Quarto's schema for the `navigation-mode` YAML field only allows
+  `linear`, `vertical`, `grid` - none is Reveal's actual "default"
+  (left/right horizontal, up/down vertical, no crossover).
+
+  We override by calling Reveal.configure() once Reveal is ready. Multiple
+  detection strategies + polling fallback so it can't silently miss the init
+  window. Logs to console so it's obvious whether it ran.
+
+  This file is included via `include-after-body` in _quarto.yml. It is ALSO
+  included via `header-includes` in the same YAML for redundancy - between
+  the two there should be no realistic way for the override to be skipped.
+-->
+<script>
+  (function () {
+    var CONFIGURED = false;
+    function configure(via) {
+      if (CONFIGURED) return;
+      if (typeof Reveal === 'undefined' || !Reveal.configure) return;
+      try {
+        Reveal.configure({ navigationMode: 'default' });
+        CONFIGURED = true;
+        try { console.info('[singularity] navigationMode -> default via ' + via); } catch (e) {}
+      } catch (e) {
+        try { console.warn('[singularity] Reveal.configure threw', e); } catch (_) {}
+      }
+    }
+
+    function trySync(via) {
+      if (CONFIGURED) return true;
+      if (typeof Reveal !== 'undefined' && Reveal.isReady && Reveal.isReady()) {
+        configure(via);
+        return true;
+      }
+      return false;
+    }
+
+    function attachReadyListener() {
+      if (typeof Reveal === 'undefined') return false;
+      if (Reveal.on)             { Reveal.on('ready', function () { configure('on-ready'); }); return true; }
+      if (Reveal.addEventListener) { Reveal.addEventListener('ready', function () { configure('addEvent-ready'); }); return true; }
+      return false;
+    }
+
+    // Strategy 1: try immediately (in case Reveal is already up).
+    if (trySync('immediate')) return;
+
+    // Strategy 2: attach a ready listener if Reveal is loaded but not yet ready.
+    attachReadyListener();
+
+    // Strategy 3: on DOMContentLoaded, try again.
+    function onDOM() {
+      if (trySync('domready')) return;
+      attachReadyListener();
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', onDOM, { once: true });
+    } else {
+      onDOM();
+    }
+
+    // Strategy 4: on window load, try again.
+    window.addEventListener('load', function () {
+      if (trySync('windowload')) return;
+      attachReadyListener();
+    }, { once: true });
+
+    // Strategy 5: poll for ~10 seconds as a last resort.
+    var attempts = 0;
+    var poll = setInterval(function () {
+      attempts++;
+      if (CONFIGURED || attempts > 200) {
+        clearInterval(poll);
+        return;
+      }
+      trySync('poll-' + attempts);
+    }, 50);
+  })();
+</script>

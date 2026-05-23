@@ -8,8 +8,21 @@ format:
     slide-number: c/t
     show-slide-number: speaker
     controls: true
+    controls-layout: bottom-right
+    controls-tutorial: false
     progress: true
     history: true
+    # navigation-mode: Quarto's revealjs writer hard-codes 'linear' as its
+    # internal default and its schema rejects 'default' as a value (only
+    # accepts linear/vertical/grid). 'linear' makes ←/→ traverse everything
+    # and ↑/↓ stop working, which is exactly what we don't want. The override
+    # in _reveal-overrides.html runs Reveal.configure({navigationMode:'default'})
+    # after Reveal is ready. Don't add navigation-mode here.
+    keyboard: true
+    # Belt-and-suspenders: inject the override in both <head> and at the end
+    # of <body>. It has an internal latch so it only configures once.
+    include-in-header: _reveal-overrides.html
+    include-after-body: _reveal-overrides.html
     transition: fade
     transition-speed: fast
     incremental: false

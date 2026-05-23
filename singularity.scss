@@ -134,7 +134,8 @@ $code-block-border-color:     $void-bg2;
 .footer         { font-size: 0.7em; color: $void-fg3; }
 .center         { text-align: center; }
 
-// "More detail in the slide below" cue. Cyan, small, italic.
+// "More detail in the slide below" cue. Cyan, small, italic. Goes at the
+// bottom of any slide that has a vertical neighbor underneath it.
 .detail-hint {
   display: block;
   margin-top: 1.2em;
@@ -142,6 +143,18 @@ $code-block-border-color:     $void-bg2;
   font-size: 0.7em;
   font-style: italic;
   opacity: 0.8;
+}
+
+// "Slide above" cue. Goes at the top of any slide that has a vertical
+// neighbor above it. Mirrors .detail-hint visually but smaller so it doesn't
+// fight the slide title.
+.up-cue {
+  display: block;
+  margin-bottom: 0.8em;
+  color: $void-cyan;
+  font-size: 0.65em;
+  font-style: italic;
+  opacity: 0.65;
 }
 
 // -----------------------------------------------------------------------------
@@ -309,14 +322,88 @@ $code-block-border-color:     $void-bg2;
 
 // -----------------------------------------------------------------------------
 // Slide controls / progress
+//
+// Reveal renders four corner-arrow buttons (←/→/↑/↓) and toggles each with an
+// `.enabled` class when navigation in that direction has a destination. With
+// `controls-layout: bottom-right` they default to ~36px and the disabled ones
+// still occupy grid slots, so on a slide with no vertical you see two grey
+// stubs. We do two things:
+//   1. Size every enabled button up significantly so the up/down indicators
+//      actually read as "there's more this way."
+//   2. Hide non-enabled buttons entirely so the corner only shows the
+//      navigation options that actually go somewhere.
 // -----------------------------------------------------------------------------
 .reveal .slide-number { color: $void-fg3; background: transparent; }
 .reveal .progress { color: $void-cyan; height: 2px; }
-.reveal .controls { color: $void-fg3; }
-.reveal .controls .navigate-left.enabled,
-.reveal .controls .navigate-right.enabled,
-.reveal .controls .navigate-up.enabled,
-.reveal .controls .navigate-down.enabled { color: $void-cyan; }
+
+.reveal .controls {
+  color: $void-fg3;
+  right: 24px;
+  bottom: 24px;
+  // Reveal exposes --r-controls-spacing on newer versions; the explicit
+  // button sizing below is the portable knob.
+}
+
+// Hide disabled (no-destination) arrows entirely.
+.reveal .controls .navigate-left:not(.enabled),
+.reveal .controls .navigate-right:not(.enabled),
+.reveal .controls .navigate-up:not(.enabled),
+.reveal .controls .navigate-down:not(.enabled) {
+  display: none !important;
+}
+
+// Make enabled arrows large, cyan, with a faint glow so they pop against the
+// cosmos background. Reveal draws the arrowhead via a `transform: rotate()`
+// of a single CSS triangle, so sizing the button scales the arrow too.
+.reveal .controls button.navigate-left,
+.reveal .controls button.navigate-right,
+.reveal .controls button.navigate-up,
+.reveal .controls button.navigate-down {
+  width: 64px;
+  height: 64px;
+  color: $void-cyan;
+  opacity: 0.9;
+  transition: transform 140ms ease, opacity 140ms ease, filter 140ms ease;
+}
+
+.reveal .controls button.navigate-left:hover,
+.reveal .controls button.navigate-right:hover,
+.reveal .controls button.navigate-up:hover,
+.reveal .controls button.navigate-down:hover {
+  color: $void-magenta;
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 12px rgba(255, 79, 203, 0.45));
+}
+
+// The triangle itself - Reveal draws it via CSS borders inside a pseudo-
+// element. Scale up so the arrowhead matches the larger button.
+.reveal .controls button.navigate-left::before,
+.reveal .controls button.navigate-right::before,
+.reveal .controls button.navigate-up::before,
+.reveal .controls button.navigate-down::before {
+  border-width: 14px !important;
+}
+
+// Subtle pulse on the down arrow so the speaker (and any audience eyeing the
+// corner) notices when there's vertical content. Slowed way down so it's a
+// breathing cue, not an animation.
+@keyframes singularity-down-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50%      { transform: translateY(3px); opacity: 1.0; }
+}
+.reveal .controls button.navigate-down.enabled {
+  animation: singularity-down-pulse 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(56, 248, 242, 0.35));
+}
+
+@keyframes singularity-up-pulse {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50%      { transform: translateY(-3px); opacity: 1.0; }
+}
+.reveal .controls button.navigate-up.enabled {
+  animation: singularity-up-pulse 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(56, 248, 242, 0.35));
+}
 
 // -----------------------------------------------------------------------------
 // Fragments - faint cyan glow on the focused fragment. (Used sparingly per
