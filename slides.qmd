@@ -108,9 +108,9 @@ date-format: long
 
 - **1997.** Deep Blue beats Kasparov at chess. Go is still considered out of reach.
 - **2016.** AlphaGo beats Lee Sedol 4-1. The hushed-silence moment.
-- **Move 37** *(Game 2)*. A move no human would play. Pros called it a mistake. It won the game.
+- **Move 37** *(Game 2)*. A non-human-looking move. Pros called it a mistake. It became pivotal.
 - **The recipe.** Huge corpus of human games + **Monte Carlo Tree Search** + a policy net (which moves to try) + a value net (who's winning).
-- **2017.** **AlphaZero**: no human games at all. Plays itself. Generalizes to chess and shogi. The first big **synthetic-data** story.
+- **2017.** **AlphaZero**: no human games at all. Plays itself. Generalizes to chess and shogi. A clean **synthetic-data** story in a perfect-rule world.
 - Search + learned heuristic is now in modern LLM "thinking" modes.
 
 [full story & further reading below ↓]{.detail-hint}
@@ -119,17 +119,17 @@ date-format: long
 
 [↑ AlphaGo (top)]{.up-cue}
 
-We were just coming out of the **symbolic AI / "good old-fashioned AI"** era with neural networks in our toolbelt. **Chess** had been beaten by **Deep Blue in 1997**. But Go had way too big a ruleset. Subtlety, nuance, intuition. You couldn't make a computer play Go - at least not well.
+Game AI still felt like search plus hand-built evaluation. **Chess** had been beaten by **Deep Blue in 1997**. But Go was different: simpler rules, a much larger search space, and a lot more shape / influence / intuition. You couldn't make a computer play Go - at least not well.
 
 Then, before the GPT-2 / 2.5 / 3 craze, the stage was set by AlphaGo. The room went quiet: *"Oh... wow. If computers can do that... does that mean..?"*
 
-**How it works.** Loaded with a huge corpus of human games. It "watched" through them. **Monte Carlo Tree Search** picks candidate moves and scores them by potential value, looking far down the line.
+**How it works.** AlphaGo started with a huge corpus of human expert games. It learned a **policy network** for which moves look promising and a **value network** for who is likely winning. **Monte Carlo Tree Search** used those learned hunches to explore future lines.
 
-**MCTS** is just an efficient way to look at *all possible moves*, and the moves after those, and the moves after those. Like Spock evaluating ten steps ahead - with constraints. How far forward to look, how many branches to actually expand instead of ten bajillion.
+**MCTS** samples promising possible futures without enumerating the whole tree. Like Spock evaluating ten steps ahead - with constraints. It decides which branches to expand, which ones to ignore, and how to back up value estimates through the search tree.
 
-**Move 37 (Game 2 vs. Lee Sedol).** AlphaGo played a shoulder hit on the fifth line. Commentators immediately called it a mistake. Top pros had never seen the move in any human canon - they later estimated the probability of a strong player choosing it at *1 in 10,000*. It turned out to be the move that won the game. The room went quiet again. It's iconic now: the moment people realized something genuinely new was happening.
+**Move 37 (Game 2 vs. Lee Sedol).** Lee had to go have a cigarette. Commentators immediately called it a mistake. Top pros had rarely seen anything like it - they later estimated the probability of a strong player choosing it at *1 in 10,000*. It became the pivotal move that helped AlphaGo win the game. The room went quiet again. It's iconic now: the moment people realized something genuinely new was happening.
 
-Then **AlphaGo Zero** and **AlphaZero (2017)** threw out the human games entirely. Just played itself. Also generalized to chess and shogi. This is one of the first - and clearest - examples of **synthetic data**: the system generates its own training material and ends up stronger than any version trained on human play.
+Then **AlphaGo Zero** and **AlphaZero (2017)** threw out the human games entirely. Just played itself. Also generalized to chess and shogi. This is one of the clearest examples of **synthetic data** working under exact rules and exact rewards: the system generates its own training material and ends up stronger than any version trained on human play.
 
 [further reading below ↓]{.detail-hint}
 
@@ -150,11 +150,11 @@ Then **AlphaGo Zero** and **AlphaZero (2017)** threw out the human games entirel
 - **1972.** Anfinsen Nobel Chemistry: the amino-acid sequence determines the folded structure.
 - **Levinthal's paradox** *(1969)*. A small protein has astronomical possible shapes - yet folds in milliseconds. There must be structure to the problem.
 - **CASP**: biennial blind prediction competition since 1994. AlphaFold debuts at **CASP13 (2018)**.
-- **CASP14 (2020)**: AlphaFold 2 reaches near-experimental accuracy. The grand challenge is "solved."
-- **AlphaFold DB (2021)**: ~200M structures, free.
-- **2024 Nobel Chemistry**: Demis Hassabis & John Jumper.
+- **CASP14 (2020)**: AlphaFold 2 reaches near-experimental accuracy on many targets. The core benchmark is effectively cracked.
+- **AlphaFold DB**: launched in 2021, expanded to ~200M structures in 2022.
+- **2024 Nobel Chemistry**: Baker for protein design; Hassabis & Jumper for structure prediction.
 - **2024**: **AlphaFold 3** extends to protein-protein, protein-ligand, RNA, DNA interactions.
-- **Architecture**: Evoformer (transformer on sequence + pair representations) + Structure Module with **SE(3) equivariance** - turn the molecule, the prediction turns with it.
+- **Architecture**: Evoformer (sequence + pair representations) + geometry-aware Structure Module - turn the molecule, the prediction turns with it.
 
 [full story & further reading below ↓]{.detail-hint}
 
@@ -168,13 +168,13 @@ Proteins are the workhorses of biology. Channels, enzymes, antibodies, motors - 
 
 **Levinthal's paradox (1969)** crystallized why it's hard: even a small protein has *astronomically* many possible folds. If a protein tried every option randomly, the universe wouldn't be old enough to finish. But real proteins fold in milliseconds. So there must be deep structure to the problem - we just couldn't see it.
 
-The biology community runs **CASP** every two years. Sequences whose structures have just been solved experimentally (but not published) are released to teams who submit predictions. It's a blind test. DeepMind showed up at **CASP13 in 2018** and did unusually well. At **CASP14 in 2020**, AlphaFold 2 didn't just win - it reached *near-experimental accuracy* across the board. The community basically declared the problem solved.
+The biology community runs **CASP** every two years. Sequences whose structures have just been solved experimentally (but not published) are released to teams who submit predictions. It's a blind test. DeepMind showed up at **CASP13 in 2018** and did unusually well. At **CASP14 in 2020**, AlphaFold 2 didn't just win - it reached *near-experimental accuracy* on many targets. The community basically declared the core benchmark cracked.
 
-DeepMind open-sourced it, then released the **AlphaFold Protein Structure Database** in 2021 with ~200 million predicted structures. Drug discovery, enzyme engineering, materials science - all on faster timelines.
+DeepMind released the code and the **AlphaFold Protein Structure Database** in 2021, then expanded the database to roughly 200 million predicted structures in 2022. Drug discovery, enzyme engineering, materials science - all on faster timelines.
 
-**2024 Nobel in Chemistry** went to Demis Hassabis and John Jumper for it. Same year, **AlphaFold 3** dropped: now it predicts not just folded proteins but their *interactions* with other proteins, with small-molecule ligands, with RNA and DNA. The next frontier.
+**2024 Nobel in Chemistry** split the story: David Baker received half for computational protein design, and Demis Hassabis and John Jumper shared half for protein structure prediction. Same year, **AlphaFold 3** dropped: now it predicts not just folded proteins but their *interactions* with other proteins, with small-molecule ligands, with RNA and DNA. The next frontier.
 
-The architecture is a clean example of **stacked paradigms**. The **Evoformer** is a transformer that reasons jointly about the amino-acid sequence and a pairwise "which positions are talking to each other" representation, fed by a search through evolutionarily-related proteins. The **Structure Module** is the load-bearing piece: it's *geometry-aware* (SE(3) equivariant), meaning if you turn the molecule, the prediction turns the same way. That equivariance is baked into the math, not learned by example - which is why it generalizes.
+The architecture is a clean example of **stacked paradigms**. The **Evoformer** reasons jointly about the amino-acid sequence and a pairwise "which positions are talking to each other" representation, fed by a search through evolutionarily-related proteins. The **Structure Module** is the load-bearing piece: it's geometry-aware, meaning if you turn the molecule, the prediction turns the same way. That geometric bias is one reason it generalizes better.
 
 [further reading below ↓]{.detail-hint}
 
@@ -195,7 +195,7 @@ The architecture is a clean example of **stacked paradigms**. The **Evoformer** 
 - **2014.** Goodfellow's **GANs**. Worked, but unstable. Mode collapse, hard to train.
 - **2015.** Sohl-Dickstein et al. - first diffusion paper. Mostly ignored.
 - **2020.** **DDPM** (Ho et al.) makes it actually work.
-- **2022.** Explosion year: **DALL-E 2** (Apr), **Imagen** (May), **Midjourney** (Jul beta), **Stable Diffusion** (Aug, open source).
+- **2022.** Explosion year: **DALL-E 2** (Apr), **Imagen** (May), **Midjourney** (Jul beta), **Stable Diffusion** (Aug, public weights/code).
 - **Latent diffusion** trick: do the math in a compressed latent space. Runs on a consumer GPU.
 - Math is physics: **Langevin dynamics**, score matching, SDEs.
 - Generalized fast: video (**Sora**, Veo), audio, 3D, **proteins (RFdiffusion)**.
@@ -210,15 +210,15 @@ Before diffusion, the generative AI conversation was about **GANs** - Generative
 
 Diffusion came from a completely different place: **non-equilibrium statistical physics**. **Sohl-Dickstein et al. (2015)** wrote the first paper. It was largely ignored for five years. Then **Ho et al. (2020)** wrote the DDPM paper - Denoising Diffusion Probabilistic Models - and **Yang Song & Stefano Ermon** worked out the score-based perspective. Suddenly the math snapped together and the results started competing with, then beating, GANs.
 
-**2022** was the explosion year. **DALL-E 2** in April. **Imagen** in May. **Midjourney** beta in July. **Stable Diffusion** in August, open source. Image generation went from research toy to consumer app in months.
+**2022** was the explosion year. **DALL-E 2** in April. **Imagen** in May. **Midjourney** beta in July. **Stable Diffusion** in August, publicly released with weights/code. Image generation went from research toy to consumer app in months.
 
-**How it works.** Take a real image. Add a tiny bit of noise. Add a tiny bit more. Keep going for many steps. Eventually it's pure static, indistinguishable from noise. Now train a network to undo *one step* at a time - given a slightly-noised image, predict what was added. At generation time, you start from pure random static and run the trained network many times, each step nudging it toward something recognizable. Text conditioning at each step tells it what to denoise *toward*.
+**How it works.** Take a real image and add noise until it becomes static. Train a network on randomly noised examples so it learns the denoising direction at each noise level. At generation time, start from pure static and run the trained network many times, each step nudging it toward something recognizable. Text conditioning tells it what to denoise *toward*.
 
 **Stable Diffusion's specific trick** is *latent diffusion*. Instead of doing all of that in raw pixel space - which is huge and expensive - you compress the image down to a small **latent space** with a separately-trained autoencoder, do the diffusion math there, then decode back to pixels at the end. That single move dropped the compute requirements enough to put image generation on a consumer GPU.
 
-**The math is physics.** Langevin dynamics, score matching, stochastic differential equations. Generation is **denoising**, not prediction. That's a fundamentally different paradigm from "predict the next token." It's part of why diffusion generalized fast: **video** (Sora, Veo), **audio**, **3D** shapes, and even **protein backbones** (RFdiffusion is essentially Stable Diffusion for proteins).
+**The math is physics.** Langevin dynamics, score matching, stochastic differential equations. Generation is **denoising**, not prediction. That's a fundamentally different paradigm from "predict the next token." It's part of why diffusion generalized fast: **video** (Sora, Veo), **audio**, **3D** shapes, and even **protein backbones** (RFdiffusion applies the same denoising idea there).
 
-This is also, technically, an **energy-based model** in disguise - it learns the local slope (the "score") of the energy landscape. That's the bridge into the next section.
+This is also closely connected to **energy-based models**: it learns local score-like directions in the data landscape. That's the bridge into the next section.
 
 [further reading below ↓]{.detail-hint}
 
@@ -240,8 +240,8 @@ This is also, technically, an **energy-based model** in disguise - it learns the
 - **Jul 2024**: **AlphaProof** announced. Algebra & number theory via the **Lean** theorem prover.
 - **IMO 2024**: combined system scores **28/42**. Silver medal. (Gold threshold: 29.)
 - Solved problems **1, 2, 4** in full. Partial on **6**. Missed **3, 5** - both combinatorics.
-- **Architecture**: an LLM proposes proof steps → formal verifier (Lean, or a custom geometry engine) accepts or rejects → LLM learns from the verdicts.
-- **Training**: ~**100 million synthetic theorems** auto-generated. Another synthetic-data story.
+- **Architecture**: language-model/search system proposes candidates → formal verifier accepts or rejects → the proposer learns from verdicts.
+- **Training**: AlphaGeometry uses ~100M synthetic geometry problems; AlphaProof uses formalized proof attempts in Lean.
 - Some problems took **days** of search to crack.
 
 [full story & further reading below ↓]{.detail-hint}
@@ -254,9 +254,9 @@ LLMs hallucinate. They will confidently invent citations, dates, equations. For 
 
 Symbolic AI has been chasing theorem proving for decades. Mathematicians have been writing formal proofs in languages like **Lean**, **Coq**, and **Isabelle** for years - every step machine-checked. But it's painfully tedious. Human in the loop everywhere.
 
-**January 2024**: DeepMind publishes **AlphaGeometry** (Nature). For International Math Olympiad geometry problems. Architecture: an LLM proposes auxiliary constructions ("draw a line here, this midpoint, that perpendicular"), and a custom **symbolic geometry deduction engine** chases the consequences of those constructions through the geometric axioms. Trained on ~100 million synthetically generated geometry problems - no human proofs needed.
+**January 2024**: DeepMind publishes **AlphaGeometry** (Nature). For International Math Olympiad geometry problems. Architecture: a language model proposes auxiliary constructions ("draw a line here, this midpoint, that perpendicular"), and a custom **symbolic geometry deduction engine** chases the consequences of those constructions through the geometric axioms. Trained on ~100 million synthetically generated geometry problems - no human proof demonstrations needed.
 
-**July 2024**: **AlphaProof** is announced. For algebra and number theory. Architecture: an LLM proposes proof steps; **Lean** verifies each one. The model is trained on ~100M auto-generated formal proof attempts - synthetic data again.
+**July 2024**: **AlphaProof** is announced. For algebra and number theory. Architecture: a language-model/search system proposes candidates and proof steps; **Lean** verifies them. The training story is synthetic too, but different: informal problems are translated into formal statements and the system learns from formal proof attempts.
 
 **IMO 2024**: DeepMind tests both on the actual problems. Result: **28 out of 42 points**, silver medal level. The gold threshold was 29 - they missed it by one point. They solved problems 1, 2, and 4 in full, got partial credit on 6, and *missed* problems 3 and 5 - both combinatorics, which is where the symbolic engine struggles because the search space isn't well-structured. Some problems took **days** of compute to crack.
 
@@ -280,7 +280,7 @@ This is the concrete **neurosymbolic** flagship - we'll come back to the paradig
 Every system we just walked through is **multiple paradigms stacked**:
 
 - AlphaGo = MCTS + deep RL + self-play
-- AlphaFold = transformers + GNN + geometric deep learning
+- AlphaFold = sequence / pair attention + geometry-aware structure prediction
 - Stable Diffusion = score-based / diffusion + U-Net + text conditioning
 - AlphaProof = neural search + symbolic verifier
 
@@ -303,7 +303,7 @@ Every system we just walked through is **multiple paradigms stacked**:
 - **1989**: **Koza** - Genetic Programming. The genome *is* an executable program.
 - **1996**: **CMA-ES** (Hansen). Gold standard for continuous black-box optimization.
 - **2002**: **NEAT** (Stanley & Miikkulainen) - evolves network *topology*, not just weights.
-- **2006**: NASA's evolved antenna flies on the **ST5 mission**. Beat human designs.
+- **2006**: NASA's evolved antenna flies on the **ST5 mission**. Outperformed conventional designs for that mission.
 - **2017**: **OpenAI ES** competitive with deep RL on Atari. The eyebrow-raiser.
 - Killer features: **no gradients**, embarrassingly parallel, works on discrete / non-differentiable / black-box problems.
 
@@ -319,9 +319,9 @@ Before backprop and gradient descent ate everything, evolutionary computation wa
 
 The history is older than most people realize. **Rechenberg and Schwefel** developed **Evolution Strategies** in 1960s-70s Germany and used them for *physical* engineering - optimizing the shapes of aerodynamic nozzles. **Holland** formalized **Genetic Algorithms** in 1975. **Koza** wrote *Genetic Programming* in 1989 - where the genome is an executable expression tree, so you're literally evolving programs. **CMA-ES** (Hansen, 1996) is still the gold standard for continuous black-box optimization - it adapts the *shape* of the mutation distribution to the local fitness landscape. **NEAT** (Stanley & Miikkulainen, 2002) evolves the *topology* of a neural network, not just its weights, growing complexity gradually.
 
-**The "wait, really?" moment** for a lot of people was OpenAI's 2017 ES paper: showed that a simple Evolution Strategy was *competitive* with deep reinforcement learning on Atari, and trained in a fraction of the wall-clock time because it parallelizes across thousands of workers trivially. ES doesn't need gradients - it just needs to score policies.
+**The "wait, really?" moment** for a lot of people was OpenAI's 2017 ES paper: showed that a simple Evolution Strategy was *competitive* with deep reinforcement learning on Atari, partly because it parallelizes across thousands of workers trivially. ES doesn't need gradients - it just needs to score policies.
 
-**Real-world**: NASA's **ST5 satellite mission (2006)** flew with antennas whose shape was *evolved* by a genetic algorithm. They look like bent paper clips. They outperformed every human-designed antenna the engineers tried.
+**Real-world**: NASA's **ST5 satellite mission (2006)** flew with antennas whose shape was *evolved* by a genetic algorithm. They look like bent paper clips. Under the mission constraints, they outperformed the conventional hand-designed options.
 
 **Why it matters**: gradient descent needs a differentiable, smooth objective. Most interesting real-world objectives aren't - they're discrete, sparse, black-box, non-differentiable. Evolution doesn't care. You give it a scoring function and a way to recombine; that's the whole interface. It's embarrassingly parallel, robust, and works on problems where SGD literally can't go.
 
@@ -344,12 +344,12 @@ The history is older than most people realize. **Rechenberg and Schwefel** devel
 [Train the landscape. Let physics handle generation.]{.muted}
 
 - **1982**: **Hopfield network**. Associative memory as energy minimization. Patterns are attractor valleys; corrupted inputs roll downhill to the stored pattern.
-- **1985**: **Boltzmann machine** (Hinton & Sejnowski). Layered EBM.
+- **1985**: **Boltzmann machine** (Hinton & Sejnowski). A stochastic EBM; restricted/deep variants became layered.
 - **2006**: Hinton's **deep belief networks** kick off the modern deep learning era. EBM-flavored.
 - **2019-20**: Score-based generative modeling (Song & Ermon, Ho et al.) connects EBMs to **diffusion**.
 - **2024 Nobel Prize in Physics**: **Hopfield & Hinton**.
-- **The connection**: diffusion models *are* EBMs in disguise. They learn the local slope (the *score*) of the energy landscape.
-- **Math is physics**: Langevin dynamics, Boltzmann distributions, free energy.
+- **The connection**: diffusion is closely related to score / energy-based modeling. It learns local slope-like directions in the data landscape.
+- **Metaphor**: If you have an orchestra, an LLM would be like telling a single flautist to play the next note. An EBM would be the next step for the full orchestra.
 - Where it shows up: image / video / audio / 3D / protein backbones, associative memory, anomaly detection.
 
 [full story & further reading below ↓]{.detail-hint}
@@ -362,15 +362,13 @@ Energy-based models are *old*. Physicists thought about this problem before comp
 
 **1982 - Hopfield networks**. The first really clean version. The network stores patterns as attractor states. Show it a noisy or partial version of one of those patterns, and the dynamics roll it downhill into the original. Associative memory, expressed as energy minimization. This is the *Hopfield* in the 2024 Nobel.
 
-**1985 - Boltzmann machines** (Hinton & Sejnowski). Layered, more capable, but intractable in the general case. Restricted Boltzmann machines made them workable. **2006 - Hinton's deep belief networks** built on RBMs and kicked off the modern deep learning era. The whole thing was EBM-flavored before backprop-on-feedforward-nets took over the mainstream.
+**1985 - Boltzmann machines** (Hinton & Sejnowski). Stochastic, more capable, but intractable in the general case. Restricted Boltzmann machines made a constrained version workable; deep variants stacked those pieces. **2006 - Hinton's deep belief networks** built on RBMs and helped kick off the modern deep learning era. The whole thing was EBM-flavored before backprop-on-feedforward-nets took over the mainstream.
 
-**The 2024 Nobel Prize in Physics** went to John Hopfield and Geoffrey Hinton "for foundational discoveries and inventions that enable machine learning with artificial neural networks." This isn't a soft Nobel - the underlying math is *literally* statistical mechanics. Boltzmann distributions, partition functions, free energy. Hopfield networks are mathematically identical to spin glasses from condensed matter physics. The Nobel committee got it right.
+**The 2024 Nobel Prize in Physics** went to John Hopfield and Geoffrey Hinton "for foundational discoveries and inventions that enable machine learning with artificial neural networks." This isn't a soft analogy - the underlying math is statistical mechanics. Boltzmann distributions, partition functions, free energy. Hopfield networks are mathematically tied to spin-glass energy models.
 
-**The modern connection**: **diffusion models are EBMs in disguise.** They don't learn the energy function directly - they learn its gradient, the **score**. From a random sample, you follow the score field downhill (Langevin dynamics) and end up at a high-density region. That's what Stable Diffusion is doing under the hood. Yang Song & Stefano Ermon's 2019 score-based paper was the bridge that made this explicit.
+**The modern connection**: diffusion models are closely related to score / energy-based modeling. They don't learn an energy function directly - they learn local score-like directions. From a random sample, you follow that field toward a high-density region. That's the intuition Stable Diffusion uses under the hood. Yang Song & Stefano Ermon's 2019 score-based paper was one of the bridges that made this explicit.
 
 **Why this matters**: it's a fundamentally different theory of what it means for a model to "know" something. Not "predict the next token." Not "minimize cross-entropy on a training set." Instead: **be at low energy near plausible data, high energy everywhere else.** The math is physics, not linguistics. The intuitions transfer differently. The limits are different.
-
-Where it shows up: image / video / audio / 3D generation, **protein backbones (RFdiffusion)**, associative memory, anomaly detection. Anywhere you want to learn a distribution rather than a function.
 
 [further reading below ↓]{.detail-hint}
 
@@ -391,11 +389,12 @@ Where it shows up: image / video / audio / 3D generation, **protein backbones (R
 - **1956**: Dartmouth Conference. Two AI camps from day one.
 - **Symbolic / GOFAI**: logic, rules, theorem provers. Composable, verifiable. Dominant through the 80s.
 - **Connectionist / NN**: perception, pattern matching, fuzzy reasoning. Took over after **2012** (AlexNet).
-- Each pure approach hits a ceiling. Symbolic = brittle. Neural = hallucinates.
+- Each pure approach hits a ceiling. Symbolic = brittle (I would also argue unscalable). Neural = stochastic & hallucinates.
 - **Garcez & Lamb (2020)**: call neurosymbolic *the third wave*.
 - **Patterns**: neural-then-symbolic pipeline · differentiable logic · program synthesis with neural priors · **LLM + formal verifier**.
 - **Flagship**: **AlphaProof / AlphaGeometry** (2024). Callback to the game-changers section.
 - Domain fit: anywhere you need *both* perception and verifiable correctness.
+- You could think of "Agentic" systems as a form of this honestly. What we now call the "agent harness" is the more symbolic part.
 
 [full story & further reading below ↓]{.detail-hint}
 
@@ -409,21 +408,14 @@ AI as a field was named at the **1956 Dartmouth Conference**, and there have bee
 
 **Connectionist AI** (neural networks): perception, pattern matching, fuzzy reasoning. Statistical, not logical. Powered by data and gradient descent. Mostly out of favor until **2012**, when AlexNet won ImageNet and the modern deep learning era kicked off. Since then it's dominated. LLMs are the current crescendo.
 
-Each tradition has clear strengths and clear limits. Symbolic is **verifiable** but **brittle** - if your rules don't cover the case, you're stuck. Neural is **perceptual** and **flexible** but **hallucinates** - it'll confidently invent things. Symbolic doesn't deal well with ambiguity; neural doesn't deal well with provable correctness.
-
-**Neurosymbolic AI** is the obvious next move: *glue them together.* Use neural for perception and proposal, use symbolic for verification and composition. **Garcez & Lamb (2020)** called this "the third wave" - first symbolic, then connectionist, now hybrid.
+**Neurosymbolic AI** is the hybrid bet: *glue them together.* Use neural for perception and proposal, use symbolic for verification and composition. **Garcez & Lamb (2020)** called this "the third wave" - first symbolic, then connectionist, now hybrid.
 
 **The architectural patterns** vary:
+
 - **Neural-then-symbolic pipeline.** A neural network perceives, hands a structured representation to a classical reasoner (planner, theorem prover, knowledge graph engine).
 - **Differentiable logic.** Embed logical operators *into* the neural network so the whole thing trains end-to-end with gradient descent. Logic Tensor Networks, DeepProbLog.
 - **Program synthesis with neural priors.** A neural model proposes programs; an interpreter checks if they actually work.
-- **LLM + formal verifier.** An LLM proposes proof or code steps; a formal system (Lean, Coq, a type checker) accepts or rejects each one. This is the **AlphaProof pattern** and it's the most exciting one right now.
-
-The **bet** is simple: pure pattern-matching has a ceiling (hallucination, no composability, no guarantees), pure logic has a ceiling (brittle, can't handle perception), and the interesting space is *between* them. Symbol grounding comes from the neural side. Generalization and guarantees come from the symbolic side.
-
-**Where it matters**: theorem proving, program synthesis, scientific discovery, anywhere you need *both* fuzzy perception and verifiable correctness. Autonomy, law, medicine, math, formal verification. Anywhere the cost of being wrong is high.
-
-A serious candidate for what "intelligence past raw scaling" looks like.
+- **Language model + formal verifier.** A language-model/search system proposes proof or code steps; a formal system (Lean, Coq, a type checker) accepts or rejects each one. This is the **AlphaProof pattern** and one of the cleanest patterns right now.
 
 [further reading below ↓]{.detail-hint}
 
@@ -439,11 +431,11 @@ A serious candidate for what "intelligence past raw scaling" looks like.
 
 # Honorable mentions {.smaller}
 
-- **Gradient-boosted trees** (XGBoost, LightGBM). Still king of tabular data. [paper](https://arxiv.org/abs/1603.02754)
+- **Gradient-boosted trees** (XGBoost, LightGBM). Still a default powerhouse for tabular data. [paper](https://arxiv.org/abs/1603.02754)
 - **Probabilistic / Bayesian methods.** When calibrated uncertainty matters more than raw accuracy.
 - **Geometric DL & GNNs.** AlphaFold, weather (GraphCast), materials.
 - **State-space models** (Mamba, S4). Linear-time challenger to transformers. [Mamba](https://arxiv.org/abs/2312.00752)
-- **Active inference / Free energy.** Perception and action as one optimization. Increasingly relevant to consciousness research.
+- **Active inference / Free energy.** Perception and action as one optimization. Serious research community, still speculative.
 - **Cellular automata / Neural CA.** Emergence from local rules. [growing NCA](https://distill.pub/2020/growing-ca/)
 - **Spiking / neuromorphic.** Ultra-low-power biological-style nets on specialized hardware.
 
@@ -459,11 +451,13 @@ A serious candidate for what "intelligence past raw scaling" looks like.
 
 # Why hierarchy, why evolution, why orchestration {.smaller}
 
-- **Why evolution.** Gradients need smooth differentiable objectives. Most interesting objectives aren't.
-- **Why hierarchy.** Single-scale search plateaus. Stack search inside search and the plateau breaks.
-- **Why orchestration at the top.** The upper layer doesn't *solve*. It decides *what to solve*.
+- **Why evolution:** Gradients (like in LLMs) need smooth differentiable objectives. Most interesting objectives aren't.
+- **Why hierarchy:** Single-scale search plateaus. Stack search inside search and the plateau breaks.
+- **Why orchestration:** Evolution is stupid (read: directionless). Intelligence at an orchestration level allows a target.
+- **Dynamic Fitness:** Allowing fitness functions to change is the generalization ingredient.
+- **Hierarchy Both Ways:** You can break down the model into composables, why not the task into atomic parts?
 
-[Thesis: **stacked search, glued together by something that can reason about the stack itself.**]{.accent-magenta}
+[Thesis: **composable pieces in a stacked solution evo search, glued together by something that can reason about the stack itself.**]{.accent-magenta}
 
 [full story & further reading below ↓]{.detail-hint}
 
@@ -471,15 +465,13 @@ A serious candidate for what "intelligence past raw scaling" looks like.
 
 [↑ Why hierarchy / evolution / orchestration (top)]{.up-cue}
 
-The motivation does most of the work in this section, so let me walk through each piece carefully.
+**Why evolution at the substrate.** Gradient descent is great when you have a smooth, differentiable objective. The reality is that most interesting objectives aren't smooth or differentiable. Composability ("did this combination of behaviors achieve the goal?"). Novelty ("is this idea actually new?"). Sparse reward ("the only signal is success or failure after 10,000 actions"). Gradient descent struggles in all of these. Evolution doesn't care. It needs a scoring function and a way to recombine, and that's it. Discrete, non-differentiable, black-box. Doesn't matter.
 
-**Why evolution at the substrate.** Gradient descent is great when you have a smooth, differentiable objective. The reality is that most interesting objectives aren't smooth or differentiable. Composability ("did this combination of behaviors achieve the goal?"). Novelty ("is this idea actually new?"). Sparse reward ("the only signal is success or failure after 10,000 actions"). Long-horizon credit assignment ("which step ten minutes ago caused this outcome?"). Gradient descent struggles in all of these. Evolution doesn't care - it needs a scoring function and a way to recombine, and that's it. Discrete, non-differentiable, black-box - all fine.
+**Why hierarchy.** A single evolutionary loop converges, then plateaus. It can't redefine what fitness *means* on its own; it can only climb the fitness landscape it was handed. So stack a second loop *above* the first. The upper loop's candidates are configurations of the lower loop. Now the system can climb both *in fitness space* and *in fitness-definition space*. The plateau breaks. Then do it again with a third loop on top of the second. Each higher rung is search over the search-spaces of the rung below.
 
-**Why hierarchy.** A single evolutionary loop converges, then plateaus. It can't redefine what fitness *means* on its own; it can only climb the fitness landscape it was handed. So stack a second loop *above* the first. The upper loop's candidates are configurations of the lower loop - what population size, what fitness function, what mutation operators. Now the system can climb both *in fitness space* and *in fitness-definition space*. The plateau breaks. Then do it again with a third loop on top of the second. Each higher rung is search over the search-spaces of the rung below.
+**Why orchestration at the top.** Pure stacked search has a problem: it has no notion of "what are we trying to accomplish right now." It'll happily climb whatever fitness landscape it was started on, even if the world changed underneath it. The **orchestrator** is the part that reads the behavior of the stack and *re-aims* it. Picks which subproblem to prioritize. Reallocates compute. Decides when a layer has converged on something useless and needs a fresh objective.
 
-**Why orchestration at the top.** Pure stacked search has a problem: it has no notion of "what are we trying to accomplish right now." It'll happily climb whatever fitness landscape it was started on, even if the world changed underneath it. The **orchestrator** is the part that reads the behavior of the stack and *re-aims* it. Picks which subproblem to prioritize. Reallocates compute. Decides when a layer has converged on something useless and needs a fresh objective. In our prototype the orchestrator is an **LLM with tools** - cheap to iterate on, doesn't need to be evolved (yet).
-
-**The thesis**: stacked search + something that reasons about the stack itself. Stacked search alone is just nested optimization. With an orchestrator on top, it becomes an *AI system* - it has a notion of goals, of what's working, of when to pivot.
+**The thesis**: stacked search + something that reasons about the stack itself. Stacked search alone is just nested optimization. With an orchestrator on top, it becomes an *AI system* - it has a notion of goals, of what's working, of when to pivot. When to even kick off the evolutionary part.
 
 **Why this might map onto consciousness research** is the next section's question. But the structural intuition is here: it looks a lot like the **predictive processing** picture of how a mind works.
 
@@ -592,8 +584,8 @@ This is exactly where the **discussion** for the room lives. Don't try to resolv
 
 # Touchpoints with consciousness research {.smaller}
 
-- **Predictive processing.** Agents that minimize a single quantity (free energy) look a lot like a hierarchy with an orchestrator.
-- **Active inference.** The Friston program. Mathematically demanding, philosophically ambitious, increasingly relevant.
+- **Predictive processing.** One influential framework: minds as prediction hierarchies.
+- **Active inference.** The Friston program. Mathematically demanding, philosophically ambitious, and a serious research community.
 - **Open-ended evolution.** Does the system keep generating *novel* fitness regimes, or does it converge?
 - The honest version: we don't know what consciousness is, but we have hypotheses with empirical handles now.
 
@@ -607,15 +599,15 @@ This is exactly where the **discussion** for the room lives. Don't try to resolv
 
 I want to be careful here. Consciousness is the most over-claimed topic in AI. Anyone who tells you they know what it is is selling something. What I'm describing are *structural similarities* between this architecture and a few specific lines of consciousness research - and the open question of whether those similarities are meaningful.
 
-**Predictive processing** is the leading neuroscientific framework for how brains work. The brain (or any sufficiently-rich agent) is constantly making predictions about its sensory inputs and updating its internal model based on prediction errors. Andy Clark, Karl Friston, Jakob Hohwy, and others have built this out over the last two decades. The reframing it gives: perception, action, learning, and attention are all the same operation - **minimize surprise** (variational free energy, formally). Low-level predictions feed up the cortical hierarchy, high-level corrections feed back down. The shape is hierarchical and the math is unified.
+**Predictive processing** is one influential framework in cognitive neuroscience. The brain (or any sufficiently-rich agent) is constantly making predictions about its sensory inputs and updating its internal model based on prediction errors. Andy Clark, Karl Friston, Jakob Hohwy, and others have built this out over the last two decades. The reframing it gives: perception, action, learning, and attention can be described through a shared operation - **minimize surprise** (variational free energy, formally). Low-level predictions feed up the cortical hierarchy, high-level corrections feed back down. The shape is hierarchical and the math is unified.
 
 **Same shape as our architecture sketch.** That's not a coincidence I'm claiming - it might just be a coincidence - but it's worth noticing.
 
-**Active inference** is Karl Friston's program built on top of predictive processing. The added move: an agent acts to make its sensory inputs match its predictions. Under the right priors, this single math principle produces what looks externally like curiosity, planning, and homeostasis - all at the same time. One optimization, many behaviors. Mathematically demanding. Philosophically ambitious. Increasingly taken seriously.
+**Active inference** is Karl Friston's program built on top of predictive processing. The added move: an agent acts to make its sensory inputs match its predictions. Under the right priors, this single math principle produces what looks externally like curiosity, planning, and homeostasis - all at the same time. One optimization, many behaviors. Mathematically demanding. Philosophically ambitious. It has a serious research community, especially in theoretical neuroscience and robotics.
 
-Why active inference matters *here*: it gives us a single optimization principle that could plausibly ground subjective experience. The orchestrator in our architecture plays a role that's structurally similar to what active inference describes for a unified agent. So one of the open questions for the discussion: *is active inference the right framework for the orchestrator, or is it a binding agent that threads through every layer?*
+Why active inference matters *here*: speculatively, it gives us one framework for thinking about subjective experience. The orchestrator in our architecture plays a role that's structurally similar to what active inference describes for a unified agent. So one of the open questions for the discussion: *is active inference the right framework for the orchestrator, or is it a binding agent that threads through every layer?*
 
-**Open-ended evolution** is the third leg. Most evolutionary systems converge - they find the optimum, then stop. Open-ended systems keep generating new fitness regimes indefinitely. POET, Quality-Diversity, novelty search. This matters here because consciousness, whatever else it is, doesn't *settle*. It keeps generating new problems for itself. If we want a system that does that, the open-ended evolution literature is the closest established model.
+**Open-ended evolution** is the third leg. Most evolutionary systems converge - they find the optimum, then stop. Open-ended systems keep generating new fitness regimes indefinitely. POET, Quality-Diversity, novelty search. This matters here because human cognition appears open-ended in this sense: it keeps generating new problems, goals, and contexts for itself. If we want a system that does that, the open-ended evolution literature is the closest established model.
 
 **Honest framing**: we don't know what consciousness *is*. The hard problem (Chalmers) is still hard. What we *do* have is a small handful of hypotheses with empirical hooks: predictive processing, integrated information theory, global workspace theory, active inference. Hierarchical evolutionary systems with orchestration is a candidate architecture for testing some of those hypotheses. That's the honest claim.
 
@@ -658,7 +650,7 @@ This is the one that usually generates the most interesting pushback - hold it i
 
 # Thanks · Q&A {.smaller}
 
-- This deck + repo: [github.com/Sinjhin/20260523-Beyond_The_Chatbot](https://github.com/ArdeaAI/20260523-Beyond_The_Chatbot)
+- This deck + repo: [github.com/ArdeaAI/20260523-Beyond_The_Chatbot](https://github.com/ArdeaAI/20260523-Beyond_The_Chatbot)
 - Find me: John Gardner · [https://github.com/Sinjhin](https://github.com/Sinjhin) on GitHub · [https://ardea.io](https://ardea.io)
 
 ::: {.center}
@@ -668,4 +660,5 @@ This is the one that usually generates the most interesting pushback - hold it i
 
 ::: {.center}
 [Stick around. Hang out. Try more handstands?]{.accent-magenta}
+:::
 :::
