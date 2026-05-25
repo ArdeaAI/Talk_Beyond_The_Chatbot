@@ -800,7 +800,7 @@ NEXUS is Step 1 of (what I think will be) a three-part research goal. Build the 
 
 # Thanks · Q&A {.smaller}
 
-- This deck + repo: [github.com/ArdeaAI/20260523-Beyond_The_Chatbot](https://github.com/ArdeaAI/20260523-Beyond_The_Chatbot)
+- This deck + repo: [github.com/ArdeaAI/20260523-Beyond_The_Chatbot](https://github.com/ArdeaAI/Talk_Beyond_The_Chatbot)
 - Find me: John Gardner · [https://github.com/Sinjhin](https://github.com/Sinjhin) on GitHub · [https://ardea.io](https://ardea.io)
 
 ::: {.center}
