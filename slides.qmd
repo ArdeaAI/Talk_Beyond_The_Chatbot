@@ -489,110 +489,282 @@ AI as a field was named at the **1956 Dartmouth Conference**, and there have bee
 - Quality-Diversity overview. [quality-diversity.github.io](https://quality-diversity.github.io/)
 - Hansen, *The CMA Evolution Strategy: A Tutorial.* [arXiv:1604.00772](https://arxiv.org/abs/1604.00772)
 
-# Architecture sketch {.smaller}
+# The original loop {.smaller}
 
-```{mermaid}
-flowchart TB
-  subgraph L0["L0 · Substrate"]
-    P0["Population of solutions"]
-    F0["Fitness eval"]
-    P0 --> F0 --> P0
-  end
-  subgraph L1["L1 · Strategy"]
-    P1["Population of L0 configurations"]
-    F1["Meta-fitness"]
-    P1 --> F1 --> P1
-  end
-  subgraph L2["L2 · Goal"]
-    P2["Population of L1 objectives"]
-    F2["Outer signal"]
-    P2 --> F2 --> P2
-  end
-  ORCH(("Orchestrator")):::accent
-  ORCH -. directs .-> L2
-  ORCH -. directs .-> L1
-  ORCH -. directs .-> L0
-  L0 --> L1 --> L2 --> ORCH
+[Before NEXUS, the idea was brute-force evolution over things that could solve.]{.muted}
 
-  classDef accent fill:#9B5CFF,stroke:#FF4FCB,color:#08080F;
-```
+- Start with a **population** of candidate programs or models.
+- Mutate them, then ask three gates: **does it compile**, **does it output**, **does the output pass a judge**?
+- Early judge: dictionary words + Grammarly-style grammar checks.
+- Lesson: evolution can explore weird solution space, but without direction it wastes absurd compute.
 
-[Three rungs · an orchestrator that reads the stack and adjusts pressure.]{.muted}
+[So it became: let search invent solutions, but give it a steering system.]{.accent-cyan}
 
 [full story below ↓]{.detail-hint}
 
 ## The full story {.smaller .detail-slide}
 
-[↑ Architecture sketch (top)]{.up-cue}
+[↑ The original loop (top)]{.up-cue}
 
-I'll walk the diagram bottom-up.
+The starting point was not a polished research system. It was random mutation over code. Take a candidate, mutate it, compile it, run it, judge the output, keep what survives. At first the judge was extremely crude: did the C or C++ compile, did the program emit anything, and did the emitted text look less wrong under a grammar checker?
 
-**L0 - Substrate.** This is a real evolutionary loop. A population of candidate solutions, a fitness evaluator, selection + mutation + recombination producing the next generation. Whatever your concrete task is - controllers for a robot, network weights, generated code, designed molecules - this is the layer doing the actual work. CMA-ES, NEAT, GP, whatever fits the task domain.
+This was back in 2004-2005 high school days and into 2007'ish era. Was a bit of a shit programmer back then.
 
-**L1 - Strategy.** A population *of L0 configurations*. Each L1 candidate is a complete spec of how to run an L0 loop: the population size, the mutation operators, the fitness function it should be using, the selection scheme. L1 evolves the L0 setup. So if L0 is "evolve a robot controller," then L1 is "evolve the recipe for evolving robot controllers."
+That crude setup still taught the important lesson. Evolution does not need a differentiable objective. It can search over code, networks, architectures, hyperparameters, and discrete choices. The problem is that unguided evolution is directionless. It can eventually find things, but only after wasting most of its budget on nonsense.
 
-**L2 - Goal.** A population *of L1 objectives*. Each L2 candidate is an answer to "what should L1 even be optimizing for?" This is where the system gets to redefine its own targets. Goal-space exploration. Novelty hunting. Quality-Diversity-style behavior characterization.
+That is where the next ingredient enters: an orchestration layer that does not hand-design the answer, but does decide where search pressure should go next.
 
-**Orchestrator.** Sits above all three. Reads how the stack is behaving - is L0 converging? Is L1 finding good L0 setups? Is L2 generating interesting goals? Then *directs pressure*. Reallocates compute. Tells L2 to look in a different direction. Tells L1 to abandon a converged setup. In our prototype the orchestrator is an **LLM with tools** - cheap to iterate on, doesn't need to be evolved (yet, see open question 1).
+# Evolution needs a driver {.smaller}
 
-**The key claim** is that the orchestrator is what makes this an **AI system** rather than just nested optimization. Without it, you have a sophisticated piece of optimization machinery. With it, you have something that has a notion of *what it's doing* and can *redirect itself*.
+[Evolution is the engine. The orchestrator is the steering wheel.]{.muted}
 
-**Compare to predictive processing.** Hierarchical predictive coding has low-level predictions feeding up, high-level corrections feeding down, and a unified objective (minimize free energy) across the whole stack. Same shape. The orchestrator does what the higher cortical areas do in that picture: read the stack's behavior, refine the goals.
+- Pure evolution mutates and selects, but it does not understand the problem.
+- A heavy-handed orchestrator would just smuggle human assumptions back in.
+- The goal is **light-touch**: re-aim search, change pressure, allocate compute, decide when a path is stuck.
+- This leaves room for non-human kinds of intelligence to emerge.
 
-# What's working, what's open {.smaller}
+[Useful search needs pressure without becoming hand-coded intelligence.]{.accent-magenta}
 
-**Working**
+# Stack the search {.smaller}
 
-- The substrate-level loop runs and converges on toy problems.
-- The orchestrator-as-LLM-with-tools framing has been useful for prototyping the upper layer cheaply.
-- Mapping the architecture onto consciousness research (self-models, predictive processing) is producing testable questions.
+```{mermaid}
+flowchart TB
+  P["Problem"] --> L0["L0: evolve candidate solvers"]
+  L0 --> C0{"Solved?"}
+  C0 -- "yes" --> S["Store solver"]
+  C0 -- "no" --> L1["L1: evolve the recipe for L0"]
+  L1 --> C1{"Still stuck?"}
+  C1 -- "no" --> S
+  C1 -- "yes" --> L2["L2: change objectives or split the problem"]
+  O(("Orchestrator")):::accent
+  O -. steers .-> L0
+  O -. steers .-> L1
+  O -. steers .-> L2
 
-**Open**
+  classDef accent fill:#9B5CFF,stroke:#FF4FCB,color:#08080F;
+```
 
-- **Credit assignment across layers.** When the outer signal fires, which rung deserves the update?
-- **Compute.** Naively, hierarchy multiplies population by generations. Need shortcuts.
-- **Evaluation.** What does "working" mean for a system whose objective is generated by another part of itself?
-- **Orchestrator stability.** The upper layer is the only non-evolutionary piece. Should it be?
-
-[Honest: this is a research program, not a product. Yet.]{.muted}
-
-[full story & further reading below ↓]{.detail-hint}
+[full story below ↓]{.detail-hint}
 
 ## The full story {.smaller .detail-slide}
 
-[↑ What's working, what's open (top)]{.up-cue}
+[↑ Stack the search (top)]{.up-cue}
 
-I want to be honest about where this is. It's a research program. There's no shippable product yet. The pieces work in isolation; the *system* is partial.
+The algorithm grows in layers.
 
-**On credit assignment across layers.** When the outer signal fires - say the orchestrator decides a goal was achieved - the credit has to flow back through L2 to L1 to L0. Each layer's population needs to know *its* contribution. This is hard. Candidate approaches: **hindsight relabeling** (rewrite the objective after the fact based on what was actually achieved), **lineage tracking** (each candidate carries its ancestry so credit can flow up the family tree), **novelty-based credit** (reward layers for producing surprising downstream behavior), **multi-objective Pareto fronts** (don't collapse to a single scalar). I don't think there's a clean answer yet.
+**Layer 0** evolves candidate solvers for the problem. These are small neural networks with the only constraint that they are composable with each other.
 
-**On compute.** A naive implementation has the inner loop run for hundreds of generations before the outer loop gets a single fitness evaluation. The compute multiplies fast - L0's generations × L1's generations × L2's generations. Tactics that help: **shared substrate populations** across L1 candidates (don't restart from scratch every time), **learned surrogate fitness** (cheap approximation of expensive evaluation), **importance sampling**, **multi-fidelity evaluation** (cheap+rough vs expensive+exact). Even with all of these, this is an expensive paradigm.
+**Layer 1** evolves the conditions for Layer 0: population size, mutation operators, architecture search space, fitness probes, selection pressure, and when to stop.
 
-**On evaluation.** Standard ML evaluation assumes a fixed test set. This system *generates* its own evaluation criteria as it runs. So how do you tell if it's "working"? The **open-ended evolution** literature - POET, Quality-Diversity, novelty search - is the closest established work, but it's pre-paradigmatic too. We're picking metrics empirically (does the behavior repertoire grow? do new niches appear?) and hoping they hold up.
+**Layer 2** changes the task pressure itself. If the current objective is too blunt, it can change the fitness function, introduce novelty pressure, or split the problem into smaller atomic parts.
 
-**On orchestrator stability.** The orchestrator is the only non-evolutionary piece in the architecture. That makes it a fixed point - the rest of the system reasons relative to it. It also makes it the most fragile piece: if the orchestrator gets stuck in a local mode, the entire stack inherits the failure. Genuine open question whether the orchestrator *itself* should be evolved (consistency: everything evolves) or whether some non-evolutionary structure has to be load-bearing for the whole thing to be coherent.
+The orchestrator watches all of this. It does not need to know the exact solution. It needs to know when search is converging, when it is wandering, when it is overfitting to one pressure, and when the problem needs to be decomposed.
 
-This is exactly where the **discussion** for the room lives. Don't try to resolve these - they're open. Hand them out and see where the conversation goes.
+# Dynamic fitness {.smaller}
 
-[further reading below ↓]{.detail-hint}
+[The functions are allowed to morph.]{.muted}
 
-## Further reading {.smaller .detail-slide}
+- Static fitness finds specialists.
+- Changing fitness can pressure robustness, transfer, and broader behavior.
+- The orchestrator can adjust the target when the system plateaus or the world changes.
+- Important caveat: dynamic fitness may help generalization, but it does not guarantee it.
 
-[↑ What's working, what's open (top)]{.up-cue}
+# Break the problem apart {.smaller}
 
-- Wang et al., *POET: Paired Open-Ended Trailblazer.* [arXiv:1901.01753](https://arxiv.org/abs/1901.01753)
-- Cully & Demiris, *Quality and Diversity Optimization: A Unifying Modular Framework.* [paper](https://arxiv.org/abs/1708.09251)
-- Andrychowicz et al., *Hindsight Experience Replay.* [arXiv:1707.01495](https://arxiv.org/abs/1707.01495)
-- Stanley et al., *Open-endedness: The last grand challenge you've never heard of.* [O'Reilly](https://www.oreilly.com/radar/open-endedness-the-last-grand-challenge-youve-never-heard-of/)
+[Hard problems are often bundles of smaller priors.]{.muted}
 
-# Touchpoints with consciousness research {.smaller}
+- Check whether a known solver already exists.
+- If not, evolve a solver for the whole problem.
+- If that fails, split the task into **atomic priors** or subskills.
+- Evolve small models for those pieces, then assemble them into a chain or graph.
 
-- **Predictive processing.** One influential framework: minds as prediction hierarchies.
-- **Active inference.** The Friston program. Mathematically demanding, philosophically ambitious, and a serious research community.
-- **Open-ended evolution.** Does the system keep generating *novel* fitness regimes, or does it converge?
-- The honest version: we don't know what consciousness is, but we have hypotheses with empirical handles now.
+[Instead of one giant model learning everything at once, search for reusable pieces.]{.accent-magenta}
 
-[I work on this part-time at Ardea. Augs is the planned product wrapper.]{.accent-cyan}
+# Mini-models become a solver graph {.smaller}
+
+```{mermaid}
+flowchart LR
+  A["Problem"] --> B["Decompose into priors"]
+  B --> C1["Mini-model: objectness"]
+  B --> C2["Mini-model: gravity"]
+  B --> C3["Mini-model: color transform"]
+  C1 --> G["Solver graph"]
+  C2 --> G
+  C3 --> G
+  G --> V{"Validate whole solution"}
+  V -- "fails" --> B
+  V -- "passes" --> D["Store in solver DSL"]
+
+  classDef accent fill:#9B5CFF,stroke:#FF4FCB,color:#08080F;
+```
+
+[The successful chain becomes a reusable solution, not just a one-off answer.]{.muted}
+
+[full story below ↓]{.detail-hint}
+
+## The full story {.smaller .detail-slide}
+
+[↑ Mini-models become a solver graph (top)]{.up-cue}
+
+The ARC-AGI mindset is useful here. A puzzle may require objectness, counting, symmetry, gravity, color remapping, or containment. Those are not full solutions by themselves. They are priors or tiny abilities the full solution depends on.
+
+The proposed solver algorithm is:
+
+1. Try known solvers first.
+2. If none solve it, evolve a candidate solver.
+3. If the whole-problem solver fails after a threshold, split the problem.
+4. Evolve small models for the pieces.
+5. Chain those mini-models into a graph.
+6. Validate the whole graph against the original problem.
+7. If it works, store it as a reusable program-like solver in a DSL search space.
+
+This starts to look like program synthesis, but with evolved neural pieces as the reusable operators. It also starts to look like a graph neural network at the system level: each node is a solver, each edge is a dependency or data handoff, and the graph itself becomes the candidate.
+
+# The blocker: representation {.smaller}
+
+[The solver graph needs a shared language for the world.]{.muted}
+
+- The evolved solvers need to agree on what they are seeing.
+- Existing models usually bake the encoder into the task model.
+- That helps end-to-end training, but couples representation to one objective.
+- The missing piece was a **task-free world model**: a shared substrate downstream solvers can speak.
+
+[That is where NEXUS (Neural Evolution for eXtensible Universal Semantics) broke off into its own research thread.]{.accent-cyan}
+
+# NEXUS split off {.smaller}
+
+[NEXUS is world code. Downstream models are task speakers of that code.]{.muted}
+
+- **NEXUS**: evolve a universal conceptual substrate from multimodal experience.
+- **Downstream solvers**: use that substrate for tasks, actions, language, planning, or ARC-style problem solving.
+- It is not a next-token model and not a classifier.
+- It is a shared perceptual filter and concept hub.
+
+[Step 1: build the substrate before asking it to reason about itself.]{.accent-magenta}
+
+[full story below ↓]{.detail-hint}
+
+## The full story {.smaller .detail-slide}
+
+[↑ NEXUS split off (top)]{.up-cue}
+
+The transcript question was exactly the core blocker: what is the perception layer? How does the system know what problem it is looking at?
+
+NEXUS is the answer to that blocker. Instead of training a task model and letting its encoder get shaped by that task, NEXUS separates the encoder into its own upstream system. Its job is not to solve the task. Its job is to place experience into a persistent latent space where related things line up across modality and time.
+
+That gives downstream models a common substrate. A model that talks, a model that plans, a model that solves visual puzzles, and a model that controls tools can all receive the same kind of world code instead of each learning an isolated representation.
+
+The tradeoff is real: if the encoder is separate, task loss does not automatically improve it. So NEXUS has to evolve representation quality directly. Each version is frozen and updates invalidate downstream models (a touch of fine-tuning should correct (TBD))
+
+# What NEXUS ingests {.smaller}
+
+[Experience is a temporal tree, not a bag of examples.]{.muted}
+
+- Dataset: [https://huggingface.co/datasets/Ardea/NEXUS-temporal_hierarchical_multi-modal](https://huggingface.co/datasets/Ardea/NEXUS-temporal_hierarchical_multi-modal).
+- Base unit: **10ms slices** with synchronized audio and visual references.
+- Higher levels: **moments**, **seconds**, **experiences**, **minutes**, then extensible levels above that.
+- Current data includes audio, frames, phonemes, words, gestures, actions, and modality slots for future sensors.
+
+[The point is continuous multimodal experience, not image-caption pairs.]{.accent-cyan}
+
+# What NEXUS evolves {.smaller}
+
+```{mermaid}
+flowchart LR
+  T["Temporal stream"] --> G["Genome"]
+  G --> E["Encoder architecture"]
+  E --> Z["Embedding substrate"]
+  Z --> C["Concepts"]
+  Z --> R["Relations"]
+  C --> D["Downstream solvers"]
+  R --> D
+  F["Fitness probes"] -. score .-> Z
+  F -. select .-> G
+
+  classDef accent fill:#9B5CFF,stroke:#FF4FCB,color:#08080F;
+```
+
+[The evolved object is the encoder and substrate, not a task answer.]{.muted}
+
+[full story below ↓]{.detail-hint}
+
+## The full story {.smaller .detail-slide}
+
+[↑ What NEXUS evolves (top)]{.up-cue}
+
+The current implementation samples genomes that describe encoder architectures: layer types, layer count, latent dimension, pooling, context window, and related hyperparameters. It builds a model from that genome, streams temporal slices through it, stores embeddings in `NexusState`, and evolves the population over recent windows of experience.
+
+The fitness is intentionally task-free. The current scaffold scores representation quality through probes:
+
+- **Diversity / anti-collapse:** different inputs should not all become the same vector.
+- **Stability:** small audio or image perturbations should not destroy the representation.
+- **Cross-modal alignment:** audio-only, visual-only, and full embeddings should agree when they describe the same moment.
+- **Rank / entropy:** the embedding space should use capacity without collapsing.
+- **Complexity controls:** optional pressure against needlessly large encoders.
+
+The supported strategy set is broad enough to test search behavior: GA, speciation, islands, MAP-Elites, NSGA-II, NSGA-III, novelty search, AFPO, and ALPS.
+
+# Concepts as hyperedges {.smaller}
+
+[A concept is not one token. It is a path through time and modality.]{.muted}
+
+- "Apple" should connect written word, spoken word, image, bite sound, action, context.
+- NEXUS tracks concepts across the temporal hierarchy.
+- Relations can be temporal, causal, compositional, similarity, association, or hierarchy.
+- The concept layer is the bridge from raw experience to reusable world structure.
+
+[The substrate is trying to make the same thing point to the same place.]{.accent-magenta}
+
+# Results so far {.smaller}
+
+**Built and running**
+
+- Streaming ingestion, temporal hierarchy, genome sampling, model building, state updates, and evolution loop are wired.
+- 21 ablations completed: temporal levels, fixed architectures, fitness components, concept / relation toggles, and strategy variants.
+- Multiple strategies have produced complete runs: GA, speciation, islands, MAP-Elites, NSGA-II, NSGA-III, novelty, ALPS.
+
+**Early signals**
+
+- Concept report: **10 / 10 concepts** were multi-level hyperedges.
+- Cross-modal report: **10 / 10 tracked concepts** had audio + visual membership; **4 / 10** also included text.
+
+[Early substrate signals are the right kind of weird. Seems to be working.]{.accent-cyan}
+
+[full story below ↓]{.detail-hint}
+
+## The full story {.smaller .detail-slide}
+
+[↑ Results so far (top)]{.up-cue}
+
+The defensible claim currently is stronger than some toy idea but weaker than a finished paper result (which I'm working on).
+
+The pipeline can stream temporal data, tokenize audio and visual slices, build encoders from evolved genomes, update a persistent state, combine plancks into a temporal hierarchy, and run evolution over the active encoder population. The ablation runner completed 21 named studies across hierarchy depth, architecture choices, fitness probes, concept toggles, relation toggles, and strategy modes.
+
+The early analysis is promising because it shows the substrate creating structure in the direction the theory predicts. In the temporal hierarchy report, all 10 analyzed concepts spanned multiple temporal levels. In the cross-modal report, all 10 tracked concepts included multiple modalities, with audio and visual present in every tracked concept and text appearing in 4 of them.
+
+Treat these as pre-paper evidence: enough to justify continuing.
+
+# Where it plugs back in {.smaller}
+
+[NEXUS is the perception substrate for the solver algorithm.]{.muted}
+
+- The original solver graph needs priors and shared representation.
+- NEXUS supplies a stable world code for those priors.
+- The solver side can evolve task models on top.
+- Successful solver graphs can feed back as reusable structures, not just outputs.
+
+[NEXUS is the part that lets the evolutionary system know what its pieces mean.]{.accent-magenta}
+
+# Why this points at consciousness research {.smaller}
+
+[Trying to get to a good foundation first.]{.muted}
+
+- **Step 1:** NEXUS builds a persistent conceptual substrate.
+- **Step 2:** downstream reasoning / planning systems speak that substrate.
+- **Step 3:** a self-model and metacognitive layer can inspect and redirect the whole system.
+- The big question: will a persistent substrate + evolved solvers + self-observation give us machine consciousness? If so, now I have to figure out how to test that.
+
+[This is a research program, not a claim that the system is conscious.]{.accent-cyan}
 
 [full story & further reading below ↓]{.detail-hint}
 
@@ -600,21 +772,18 @@ This is exactly where the **discussion** for the room lives. Don't try to resolv
 
 [↑ Consciousness research (top)]{.up-cue}
 
-I want to be careful here. Consciousness is the most over-claimed topic in AI. Anyone who tells you they know what it is is selling something. What I'm describing are *structural similarities* between this architecture and a few specific lines of consciousness research - and the open question of whether those similarities are meaningful.
+The cautious framing matters. Consciousness is easy to over-claim and hard to define. NEXUS does not prove consciousness, and the current implementation is not an agent with inner experience.
 
-**Predictive processing** is one influential framework in cognitive neuroscience. The brain (or any sufficiently-rich agent) is constantly making predictions about its sensory inputs and updating its internal model based on prediction errors. Andy Clark, Karl Friston, Jakob Hohwy, and others have built this out over the last two decades. The reframing it gives: perception, action, learning, and attention can be described through a shared operation - **minimize surprise** (variational free energy, formally). Low-level predictions feed up the cortical hierarchy, high-level corrections feed back down. The shape is hierarchical and the math is unified.
+The reason it belongs near consciousness research is structural. A persistent world substrate gives the system something like stable perception. Evolved solver graphs give it non-human routes to problem solving. An orchestrator gives it a way to redirect effort. A future self-model would give it something to inspect: not just the outside world, but its own substrate, solver graph, goals, and failures.
 
-**Same shape as our architecture sketch.** That's not a coincidence I'm claiming - it might just be a coincidence - but it's worth noticing.
+That maps onto several serious research frames without collapsing into any one of them:
 
-**Active inference** is Karl Friston's program built on top of predictive processing. The added move: an agent acts to make its sensory inputs match its predictions. Under the right priors, this single math principle produces what looks externally like curiosity, planning, and homeostasis - all at the same time. One optimization, many behaviors. Mathematically demanding. Philosophically ambitious. It has a serious research community, especially in theoretical neuroscience and robotics.
+- **Predictive processing:** hierarchical models update themselves against prediction error.
+- **Active inference:** perception and action are framed as one loop of minimizing surprise.
+- **Global workspace:** selected information becomes globally available to many specialist systems.
+- **Open-ended evolution:** the system keeps generating new goals, niches, and pressures instead of converging once.
 
-Why active inference matters *here*: speculatively, it gives us one framework for thinking about subjective experience. The orchestrator in our architecture plays a role that's structurally similar to what active inference describes for a unified agent. So one of the open questions for the discussion: *is active inference the right framework for the orchestrator, or is it a binding agent that threads through every layer?*
-
-**Open-ended evolution** is the third leg. Most evolutionary systems converge - they find the optimum, then stop. Open-ended systems keep generating new fitness regimes indefinitely. POET, Quality-Diversity, novelty search. This matters here because human cognition appears open-ended in this sense: it keeps generating new problems, goals, and contexts for itself. If we want a system that does that, the open-ended evolution literature is the closest established model.
-
-**Honest framing**: we don't know what consciousness *is*. The hard problem (Chalmers) is still hard. What we *do* have is a small handful of hypotheses with empirical hooks: predictive processing, integrated information theory, global workspace theory, active inference. Hierarchical evolutionary systems with orchestration is a candidate architecture for testing some of those hypotheses. That's the honest claim.
-
-This is what I work on part-time at **Ardea**. **Augs** is the planned product wrapper - the place where this research turns into something useful enough to fund itself. We're not there yet.
+NEXUS is Step 1 of (what I think will be) a three-part research goal. Build the substrate. Build systems that reason through it. Then study whether self-modeling over that substrate creates measurable properties relevant to consciousness.
 
 [further reading below ↓]{.detail-hint}
 
@@ -624,32 +793,10 @@ This is what I work on part-time at **Ardea**. **Augs** is the planned product w
 
 - Friston, *The free-energy principle: a unified brain theory?* [Nature Reviews Neuroscience 2010](https://www.fil.ion.ucl.ac.uk/~karl/The%20free-energy%20principle%20A%20unified%20brain%20theory.pdf)
 - Clark, *Whatever Next? Predictive Brains, Situated Agents, and the Future of Cognitive Science.* [paper](https://www.cambridge.org/core/journals/behavioral-and-brain-sciences/article/whatever-next-predictive-brains-situated-agents-and-the-future-of-cognitive-science/33542C736E17E3D1D44E8D03BE5F4CD9)
-- Hohwy, *The Predictive Mind* (book). The accessible book-length version.
-- Tomasello, *A Natural History of Human Thinking* (book). Different angle on hierarchical cognition.
-- Ardea (research notes). [ardea.io](https://ardea.io)
+- Baars, *A Cognitive Theory of Consciousness* (global workspace).
+- Stanley et al., *Open-endedness: The last grand challenge you've never heard of.* [O'Reilly](https://www.oreilly.com/radar/open-endedness-the-last-grand-challenge-youve-never-heard-of/)
+- Ardea / NEXUS research notes. [ardea.io](https://ardea.io)
 
-# Discussion prompts {.smaller}
-
-1. Should the orchestrator itself be evolved, or is some non-evolutionary structure load-bearing?
-2. Is hierarchy enough, or do we need **lateral** structure too (peer layers, not just stacked)?
-3. Where does **active inference** belong in this picture: a fourth layer, or the *binding agent* across layers?
-4. The honest one: how do we tell if this is **actually intelligent** vs. cleverly-engineered hill-climbing?
-
-[my thinking on each below ↓]{.detail-hint}
-
-## My thinking on each {.smaller .detail-slide}
-
-[↑ Discussion prompts (top)]{.up-cue}
-
-**1. Should the orchestrator itself be evolved?** The case *for*: consistency. Everything else in the stack evolves. Having a non-evolved orchestrator is a special exception, and special exceptions are usually where the leak is. The case *against*: stability. If everything evolves, what's the fixed point? Maybe the orchestrator has to be a stable observer/coordinator for the rest of the system to be coherent. My current lean: there's a "frame" that needs to be non-evolutionary (like the laws of physics in biology), but maybe that frame is just the substrate and the orchestrator should still be evolvable. Unresolved.
-
-**2. Hierarchy vs. lateral structure.** The architecture I sketched is strictly stacked - L0 under L1 under L2. But biological intelligence has heavy **lateral** structure: corpus callosum bridging the two hemispheres, cortical areas talking to each other, default mode networks. Maybe each layer should be a network of peer evolving populations, not a single one. Open whether this is a software detail or a structural insight that changes the math.
-
-**3. Where does active inference fit?** Two readings. One: active inference *is* the orchestrator - it's the unified optimization principle that the orchestrator implements. Two: active inference is a *binding agent* that runs across all layers, gluing perception+action+learning under one free-energy budget. I don't think these are mutually exclusive but they're different architecturally.
-
-**4. How do we tell if it's actually intelligent vs. cleverly-engineered hill-climbing?** The honest answer: I don't know, and neither does anyone else. The behaviorist test (does it solve novel problems?) is necessary but not sufficient. The generative test (does it discover *novel goals*?) is closer but ill-defined. The phenomenological test (does it have inner experience?) is probably untestable from the outside. We don't have a definition we agree on, so we can't measure it.
-
-This is the one that usually generates the most interesting pushback - hold it if the room is quiet on the others. Let people argue. Don't try to resolve any of these. Capture the interesting threads for mingling.
 
 # Thanks · Q&A {.smaller}
 
