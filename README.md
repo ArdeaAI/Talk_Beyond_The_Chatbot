@@ -1,5 +1,7 @@
 # 20260523-Beyond_The_Chatbot
 
+### *NOTE: I've had a chance to go through this and clean it up now.
+
 Tour the paradigms beyond LLMs; evolution, energy landscapes, neurosymbolic systems, etc..
 
 ## Beyond the Chatbot: A Tour of the AI Universe (w/ The AI Collective, Chatt*Lab)
