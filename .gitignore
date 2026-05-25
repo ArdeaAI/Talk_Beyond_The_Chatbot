@@ -14,8 +14,6 @@ ai/
 # Quarto build artifacts
 # ==================================================================
 /.quarto/
-slides.html
-slides_files/
 /_freeze/
 /_site/
 
