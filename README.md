@@ -43,7 +43,7 @@ No lab coat required. Just stories, metaphors, and a willingness to be curious.
 
 - [Slides](https://ardeaai.github.io/Talk_Beyond_The_Chatbot)
 - [Transcript](assets/transcript.vtt)
-- Video: [https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing](https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing)
+- [Video](https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing)
 
 
 ## Usage
