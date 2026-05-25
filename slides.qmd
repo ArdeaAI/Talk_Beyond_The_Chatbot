@@ -149,8 +149,9 @@ Then **AlphaGo Zero** and **AlphaZero (2017)** threw out the human games entirel
 
 - **1972.** Anfinsen Nobel Chemistry: the amino-acid sequence determines the folded structure.
 - **Levinthal's paradox** *(1969)*. A small protein has astronomical possible shapes - yet folds in milliseconds. There must be structure to the problem.
-- **CASP**: biennial blind prediction competition since 1994. AlphaFold debuts at **CASP13 (2018)**.
-- **CASP14 (2020)**: AlphaFold 2 reaches near-experimental accuracy on many targets. The core benchmark is effectively cracked.
+- **Rosetta era**: David Baker's Rosetta leads early CASP work; **Rosetta@home** borrows idle home computers; **Foldit** turns folding into a game.
+- **CASP13 (2018)**: AlphaFold jumps past the plateau, roughly 70 on the CASP scale - impressive, but below the 90-ish "solved" threshold.
+- **CASP14 (2020)**: AlphaFold 2 clears that threshold on many targets. The core benchmark is effectively cracked.
 - **AlphaFold DB**: launched in 2021, expanded to ~200M structures in 2022.
 - **2024 Nobel Chemistry**: Baker for protein design; Hassabis & Jumper for structure prediction.
 - **2024**: **AlphaFold 3** extends to protein-protein, protein-ligand, RNA, DNA interactions.
@@ -168,13 +169,13 @@ Proteins are the workhorses of biology. Channels, enzymes, antibodies, motors - 
 
 **Levinthal's paradox (1969)** crystallized why it's hard: even a small protein has *astronomically* many possible folds. If a protein tried every option randomly, the universe wouldn't be old enough to finish. But real proteins fold in milliseconds. So there must be deep structure to the problem - we just couldn't see it.
 
-The biology community runs **CASP** every two years. Sequences whose structures have just been solved experimentally (but not published) are released to teams who submit predictions. It's a blind test. DeepMind showed up at **CASP13 in 2018** and did unusually well. At **CASP14 in 2020**, AlphaFold 2 didn't just win - it reached *near-experimental accuracy* on many targets. The community basically declared the core benchmark cracked.
+Before AlphaFold, the front-runner story was **David Baker's Rosetta**. It searched for low-energy folds with hand-built physical and statistical rules. Baker's group scaled that search with **Rosetta@home** which was a distributed compute system. Then **Foldit** put humans in the loop as players, turning protein folding into a game where people could sometimes see moves the search missed.
 
-DeepMind released the code and the **AlphaFold Protein Structure Database** in 2021, then expanded the database to roughly 200 million predicted structures in 2022. Drug discovery, enzyme engineering, materials science - all on faster timelines.
+The biology community runs **CASP** every two years. Rosetta and other methods had pushed the field forward. DeepMind showed up at **CASP13 in 2018** with AlphaFold 1, won clearly, and landed around 70 on the CASP scale. At **CASP14 in 2020**, AlphaFold 2 returned. The community basically declared the core benchmark cracked.
 
-**2024 Nobel in Chemistry** split the story: David Baker received half for computational protein design, and Demis Hassabis and John Jumper shared half for protein structure prediction. Same year, **AlphaFold 3** dropped: now it predicts not just folded proteins but their *interactions* with other proteins, with small-molecule ligands, with RNA and DNA. The next frontier.
+DeepMind released the code and the **AlphaFold Protein Structure Database** in 2021, then expanded the database to roughly 200 million predicted structures in 2022.
 
-The architecture is a clean example of **stacked paradigms**. The **Evoformer** reasons jointly about the amino-acid sequence and a pairwise "which positions are talking to each other" representation, fed by a search through evolutionarily-related proteins. The **Structure Module** is the load-bearing piece: it's geometry-aware, meaning if you turn the molecule, the prediction turns the same way. That geometric bias is one reason it generalizes better.
+The architecture is a clean example of **stacked paradigms**. The **Evoformer** reasons jointly about the amino-acid sequence and a pairwise "which positions are talking to each other" representation, fed by a search through evolutionarily-related proteins. The **Structure Module** is geometry-aware, meaning if you turn the molecule, the prediction turns the same way. That geometric bias is one reason it generalizes better.
 
 [further reading below ↓]{.detail-hint}
 
@@ -185,6 +186,8 @@ The architecture is a clean example of **stacked paradigms**. The **Evoformer** 
 - Jumper et al., *Highly accurate protein structure prediction with AlphaFold.* [Nature 2021](https://www.nature.com/articles/s41586-021-03819-2)
 - AlphaFold Protein Structure Database. [alphafold.ebi.ac.uk](https://alphafold.ebi.ac.uk/)
 - DeepMind, *AlphaFold 3.* [blog](https://deepmind.google/discover/blog/alphafold-3-predicts-the-structure-and-interactions-of-all-of-lifes-molecules/)
+- Veritasium, *AlphaFold - The Most Useful Thing AI Has Ever Done.* [YouTube](https://www.youtube.com/watch?v=P_fHJIYENdI)
+- Rosetta@home. [boinc.bakerlab.org/rosetta](https://boinc.bakerlab.org/rosetta/)
 - Mohammed AlQuraishi, *AlphaFold at CASP13* - accessible deep-dive.
 - Anfinsen, *Principles that govern the folding of protein chains.* [Science 1973 (Nobel lecture)](https://www.science.org/doi/10.1126/science.181.4096.223)
 
