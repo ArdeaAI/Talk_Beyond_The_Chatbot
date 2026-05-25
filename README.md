@@ -4,6 +4,7 @@
 
 Tour the paradigms beyond LLMs; evolution, energy landscapes, neurosymbolic systems, etc..
 
+
 ## Beyond the Chatbot: A Tour of the AI Universe (w/ The AI Collective, Chatt*Lab)
 
 LLMs are everywhere right now; and for good reason. They create much leverage. We will talk about this.
@@ -15,6 +16,7 @@ AlphaGo. AlphaFold. Stable Diffusion. They're built on completely different idea
 This month, we're taking a tour of that wider universe. We'll start with what's actually working in production today, walk through the game-changers most people have heard of but never really looked inside, and end at the research frontier where things get strange (mostly in a good way).
 
 No lab coat required. Just stories, metaphors, and a willingness to be curious.
+
 
 ## Agenda:
 
@@ -36,13 +38,17 @@ No lab coat required. Just stories, metaphors, and a willingness to be curious.
 3:50 – 4:30 - Research-level deep dive discussion: hierarchical evolutionary systems with orchestration (40 min) 
 4:30 – 5:00 - Open Q&A, mingling, wind-down (30 min)
 
+
 ## Materials from meetup
+
+- [Slides](https://ardeaai.github.io/Talk_Beyond_The_Chatbot)
 - [Transcript](assets/transcript.vtt)
 - Video: [https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing](https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing)
 
-## Usage
-(bun or npm or <your-fav-js-package-manager>)
 
+## Usage
+
+(bun or npm or <your-fav-js-package-manager>)
 - `bun install`
 - `bun run render`
 - `bun run start`
