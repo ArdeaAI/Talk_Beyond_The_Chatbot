@@ -437,3 +437,31 @@ $code-block-border-color:     $void-bg2;
 .reveal .mermaid .edgePath .path { stroke: $void-cyan !important; stroke-width: 1.5px !important; }
 .reveal .mermaid .arrowheadPath { fill: $void-cyan !important; stroke: $void-cyan !important; }
 .reveal .mermaid .cluster rect { fill: $void-bg1 !important; stroke: $void-magenta !important; }
+
+// Keep mermaid diagrams inside the slide. Reveal renders slides at the
+// configured 1280x720 coordinate system and then transform-scales the
+// whole slide to fit the viewport, so `vh` refers to the viewport (not
+// the slide) and is unreliable. Use absolute pixels in slide coordinates.
+// Mermaid.js sets an inline `style="max-width: NNNpx"` on the <svg>, so
+// we need !important to clamp it.
+.reveal .slides section .mermaid {
+  display: flex !important;
+  justify-content: center;
+  margin: 0 auto;
+}
+.reveal .slides section .mermaid svg {
+  max-height: 520px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  width: auto !important;
+}
+// `.smaller` slides give up some chart room to the H1.
+.reveal .slides section.smaller .mermaid svg {
+  max-height: 440px !important;
+}
+// Tame the H1 on slides that host a tall mermaid chart so the chart
+// gets the vertical space it needs.
+.reveal .slides section.smaller > h1:first-child {
+  font-size: 1.8em;
+  margin-bottom: 0.25em;
+}

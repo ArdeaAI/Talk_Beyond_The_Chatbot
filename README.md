@@ -34,3 +34,13 @@ No lab coat required. Just stories, metaphors, and a willingness to be curious.
 3:50 – 4:30 - Research-level deep dive discussion: hierarchical evolutionary systems with orchestration (40 min) 
 4:30 – 5:00 - Open Q&A, mingling, wind-down (30 min)
 
+## Materials from meetup
+- [Transcript](assets/transcript.vtt)
+- Video: [https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing](https://drive.google.com/file/d/1lBG_ViFpg6RN9nOey3o22qYRY_ak1VPg/view?usp=sharing)
+
+## Usage
+(bun or npm or <your-fav-js-package-manager>)
+
+- `bun install`
+- `bun run render`
+- `bun run start`

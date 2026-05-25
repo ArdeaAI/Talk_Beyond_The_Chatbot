@@ -1,0 +1,5223 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.360 --> 00:00:10.160
+Basically uh we're going to go into
+the whole thing is uh I think most
+
+00:00:07.200 --> 00:00:14.400
+people who are not into uh you know
+machine learning and the research side
+
+00:00:11.840 --> 00:00:19.439
+of things uh we might see some like
+diffusion models for image generation
+
+00:00:16.880 --> 00:00:24.080
+but it's primarily large language models
+with stocastic gradient descent uh which
+
+00:00:22.320 --> 00:00:30.720
+I can go into detail about explaining
+that if anybody wants to later but um
+
+00:00:26.880 --> 00:00:34.719
+the kind of goal for this is to go over
+uh stuff in kind of two phases that
+
+00:00:32.640 --> 00:00:40.640
+aren't that. And we are going to get
+into diffusion. Uh and this is very much
+
+00:00:38.239 --> 00:00:47.520
+uh I'll be sharing this uh repo uh
+online uh afterwards. And um it has
+
+00:00:44.719 --> 00:00:52.320
+links for further reading. Um and I do
+apologize some of the later part of this
+
+00:00:49.680 --> 00:00:56.800
+is uh was scaffolded by AI and then
+written by AI and I haven't gone through
+
+00:00:54.000 --> 00:01:01.199
+and uh been able to uh clean up a lot of
+that. So I'll be doing that after. um
+
+00:00:59.440 --> 00:01:07.760
+this meeting, you know, kind of doing
+area of improvement over this this
+
+00:01:03.359 --> 00:01:13.760
+evening. Kind of ran out of time. Uh but
+yeah, the idea is to kind of do a
+
+00:01:09.680 --> 00:01:18.320
+surface level kind of conceptual uh uh
+understanding of each of these and then
+
+00:01:16.320 --> 00:01:21.600
+we'll go into uh further reading or
+there will be further reading in the
+
+00:01:19.759 --> 00:01:28.159
+book and and also a little bit of
+history in there too.
+
+00:01:23.600 --> 00:01:36.560
+Um, so one of the first ones was Alpha
+Go. Um, and you know, we had this uh
+
+00:01:33.520 --> 00:01:43.200
+Beat Blue was 1997.
+I think it was 1997. Yeah. Um, that uh
+
+00:01:40.079 --> 00:01:46.720
+beat uh the grandm world grandmaster at
+chess.
+
+00:01:44.240 --> 00:01:53.200
+Who was it? Anybody?
+Yeah. Uh, and so that was kind of an
+
+00:01:50.320 --> 00:01:56.720
+unthinkable thing, right? But then, you
+know, we started thinking about it. I
+
+00:01:54.479 --> 00:02:03.840
+said, well, you know, there are really
+distinct rules for chess. The the move
+
+00:02:00.079 --> 00:02:08.879
+set is pretty exact as far like there is
+generally a best move you can do or a
+
+00:02:06.799 --> 00:02:16.239
+series of like one to three best moves.
+Uh, right. So, maybe that's not as
+
+00:02:12.319 --> 00:02:21.680
+impressive in retrospect, but then go,
+go is this like very nuanced game,
+
+00:02:18.800 --> 00:02:26.480
+right? Uh, you're talking about like uh
+more feeling based things like who has
+
+00:02:24.160 --> 00:02:33.200
+the most territory, what what's the sway
+look like? You know, uh the rule set is
+
+00:02:30.080 --> 00:02:36.560
+tremendously bigger than chess. So that
+was like, oh, there's no way that a
+
+00:02:35.120 --> 00:02:46.640
+computer is ever going to be able to do
+that. Well, then uh Alph Go comes along.
+
+00:02:42.560 --> 00:02:53.040
+So, um, the way that Alph Go was made
+is, uh, they basically took a lot of the
+
+00:02:49.519 --> 00:02:57.840
+Go games, uh, from the world champions
+and they fed it into this system. And
+
+00:02:55.599 --> 00:03:04.319
+the system would do a Monte Carlo
+research, which what that means, uh, to
+
+00:03:01.599 --> 00:03:08.319
+kind of break that down into human
+language
+
+00:03:05.840 --> 00:03:12.080
+is that it will kind of, uh, figure out
+pathways. So, it's a a tree of like all
+
+00:03:10.720 --> 00:03:16.560
+the different decisions. So, think of
+like Spock uh knowing being like 10
+
+00:03:14.560 --> 00:03:21.599
+steps ahead of everybody else. He can
+see like all these different pathways
+
+00:03:18.640 --> 00:03:26.480
+can go down uh to kind of get to an
+instate of whatever uh the situation is
+
+00:03:24.800 --> 00:03:30.799
+right now. And he can kind of go through
+those in his mind and figure out which
+
+00:03:28.159 --> 00:03:34.159
+one is the best and weight those higher
+and basically go through all these
+
+00:03:32.239 --> 00:03:37.760
+branches the tree be like, "Oh yeah,
+this one's good. This one's good. Uh
+
+00:03:36.080 --> 00:03:41.760
+these are not so good." You can stop,
+you know, ignore those now. And you can
+
+00:03:40.239 --> 00:03:47.360
+it gets more and more efficient that
+way. Right? So, uh it basically was
+
+00:03:45.360 --> 00:03:52.239
+going through these games looking at all
+of the different moves and kind of
+
+00:03:50.080 --> 00:03:57.040
+calculating the next moves and how good
+they would be and it would be going so
+
+00:03:54.400 --> 00:04:01.360
+many steps ahead. And that was uh one of
+the parameters of the model was like how
+
+00:03:59.200 --> 00:04:05.760
+many steps ahead it goes. Now, the other
+thing they did is this was kind of an
+
+00:04:03.439 --> 00:04:11.840
+early form of attention. So, not only
+would it judge those moves in that game,
+
+00:04:09.120 --> 00:04:16.799
+but it would look at other games that
+were had a similar setup and compare
+
+00:04:14.319 --> 00:04:21.280
+moves from those games and you kind of
+had a a cross reference between
+
+00:04:18.720 --> 00:04:25.919
+different games to bring in that sense
+of generalization.
+
+00:04:24.080 --> 00:04:31.440
+Um,
+yeah. So the policy net uh it had a
+
+00:04:28.240 --> 00:04:37.440
+built-in policy net that was uh almost
+an algorithmic um way of scoring the
+
+00:04:34.800 --> 00:04:42.479
+moves and that would drive the the tree
+search Monte Carlo tree search to weight
+
+00:04:39.440 --> 00:04:47.600
+them higher or lower like ah this is a
+good decision this is a good move or
+
+00:04:44.479 --> 00:04:54.320
+maybe not so much with that one.
+Um and then alpha zero came along after
+
+00:04:50.240 --> 00:04:59.680
+that. So uh alpha go beat lease at all.
+Um
+
+00:04:56.080 --> 00:05:01.600
+was that 2012 I want to say
+2015
+
+00:05:00.880 --> 00:05:11.440
+16
+2016 okay
+
+00:05:04.960 --> 00:05:18.400
+um so be at least it all um one of the
+interesting things was move 37.
+
+00:05:15.520 --> 00:05:24.960
+Uh and this kind of uh in retrospect
+came from that cross referential search
+
+00:05:22.720 --> 00:05:29.759
+between different games and kind of that
+generalization where whenever it made
+
+00:05:27.759 --> 00:05:33.039
+move 37
+uh I think least at all had to go out
+
+00:05:31.680 --> 00:05:35.600
+and take a smoke break.
+Yeah.
+
+00:05:33.440 --> 00:05:40.639
+Because he didn't understand it and all
+of the people who were judging that
+
+00:05:37.199 --> 00:05:46.160
+competition were like oh dumb AI has
+made a mistake.
+
+00:05:42.800 --> 00:05:50.800
+And then later on down the road, it
+turned out that move was a pivotal move
+
+00:05:48.560 --> 00:05:57.360
+for the game. I think that was game two
+that it did that game two. And so that
+
+00:05:55.440 --> 00:06:01.440
+brings up one thing that is uh really
+interesting to think about with these
+
+00:05:59.039 --> 00:06:07.919
+very deep neural networks. And kind of
+the definition uh of generative uh
+
+00:06:04.319 --> 00:06:13.199
+mathematically speaking is that the data
+features and what I mean by that is if
+
+00:06:10.720 --> 00:06:19.600
+you have a house for instance it'll have
+square footage that is one data feature.
+
+00:06:15.520 --> 00:06:25.199
+It'll have uh walkability that's another
+uh data could be another data feature.
+
+00:06:22.160 --> 00:06:29.840
+Um you know so on so forth. The price
+would be a data feature. So each of
+
+00:06:27.520 --> 00:06:35.360
+these aspects of the house for sale
+tail, right? With a a deep neural
+
+00:06:33.039 --> 00:06:41.440
+network, you don't have to define those
+data features, it will find those uh
+
+00:06:39.360 --> 00:06:46.160
+basically by itself. And that's kind of
+where the black box part of it comes
+
+00:06:43.039 --> 00:06:53.440
+from, right? So
+this goes into that that move 37. It saw
+
+00:06:49.840 --> 00:06:59.039
+some pattern that uh the master human
+play had not seen, you know, in all of
+
+00:06:56.720 --> 00:07:03.039
+the thousands of years. I think the
+Chinese game, right? All the thousands
+
+00:07:00.720 --> 00:07:06.000
+of years we played go, nobody had really
+seen that and they thought it was stupid
+
+00:07:04.400 --> 00:07:13.599
+actually, but then it turned out to be
+great. Um, after that along came Alpha
+
+00:07:10.639 --> 00:07:20.400
+Zero, which Alpha Zero was a slight
+modification on Alpha Go. And what that
+
+00:07:17.120 --> 00:07:24.240
+did is they threw out I mentioned it was
+loaded up with all the human games,
+
+00:07:22.080 --> 00:07:27.840
+right? They threw that out. They're
+like, "We don't we don't have any of
+
+00:07:25.680 --> 00:07:33.280
+that. We don't these silly humans don't
+even know how to play Go. You couldn't
+
+00:07:29.199 --> 00:07:37.520
+beat us." I'm speaking as AI, right? But
+um
+
+00:07:34.800 --> 00:07:41.599
+they threw that out and they had it play
+against itself from scratch, from ground
+
+00:07:40.000 --> 00:07:47.440
+zero.
+And it got even better, even faster
+
+00:07:45.440 --> 00:07:52.400
+because it did not have those human
+constraints. You could think of it like
+
+00:07:48.800 --> 00:07:54.720
+that. Um, to kind of weigh it down, it
+didn't have that free learning. Yeah.
+
+00:07:54.240 --> 00:07:59.520
+So,
+was that was Alpha Zero also a Netflix
+
+00:07:57.599 --> 00:08:02.720
+series just like Alpha Go?
+I'm not sure
+
+00:08:00.479 --> 00:08:05.599
+because I saw the Alpha Go series and I
+thought it was pretty impressive when I
+
+00:08:04.160 --> 00:08:10.960
+watched it back then.
+Yeah. But I had I didn't know if they
+
+00:08:07.280 --> 00:08:14.240
+actually televised or document document.
+I'm not sure. That would be interesting
+
+00:08:12.400 --> 00:08:19.280
+to to look into though.
+Oh, also I should mention that uh I want
+
+00:08:17.039 --> 00:08:22.720
+this to be like very much uh not a
+lecture, a conversation. So feel free to
+
+00:08:20.960 --> 00:08:26.479
+interrupt me, ask questions. Don't even
+have to raise your hands like we can
+
+00:08:24.400 --> 00:08:30.000
+talk, right?
+Um
+
+00:08:28.400 --> 00:08:34.640
+so
+one thing that I uh kind of came to
+
+00:08:32.320 --> 00:08:40.800
+understand with alpha or kind of thought
+about with alpha zero is it's a really
+
+00:08:37.120 --> 00:08:44.959
+good way to describe uh synthetic data.
+I was describing uh trying to describe
+
+00:08:42.880 --> 00:08:51.040
+to one of my friends what synthetic data
+is. Well, this is one of the first
+
+00:08:47.680 --> 00:08:54.640
+examples of synthetic data uh far before
+we got to the point of like the whole
+
+00:08:53.360 --> 00:08:57.760
+craze of like, oh, we're going to run
+out of data and we're going to have to
+
+00:08:56.080 --> 00:09:03.040
+start making synthetic data and it's
+going to degrade over time and so on so
+
+00:09:00.000 --> 00:09:07.120
+forth. Well, Alpha Zero is a proof of
+concept that that's not the case, right?
+
+00:09:05.600 --> 00:09:11.040
+Because it started from zero, started
+from scratch. It didn't have any games
+
+00:09:08.800 --> 00:09:16.320
+loaded into it. It just played against
+itself over and over again with only the
+
+00:09:13.680 --> 00:09:23.440
+rule set of go and the scoring system
+and it learned the the best ways to win.
+
+00:09:20.640 --> 00:09:31.120
+Um all of those games of it playing
+against itself. That's synthetic data.
+
+00:09:28.480 --> 00:09:35.360
+Isn't it u it seems like a kind of an
+apples to oranges comparison because in
+
+00:09:32.800 --> 00:09:39.200
+the case of go uh there's a winning and
+losing and there's a certain you can
+
+00:09:37.440 --> 00:09:43.440
+kind of discreetly tell whether a move
+is better or worse but like uh what
+
+00:09:41.680 --> 00:09:48.399
+works produced for example doesn't have
+such a clear judgment that you can
+
+00:09:45.120 --> 00:09:53.080
+assign that you give to it.
+H so um
+
+00:09:53.360 --> 00:10:02.399
+so with with the words I mean as I think
+you know there's like uh the um uh what
+
+00:09:59.680 --> 00:10:08.640
+is it block vector word vector word word
+word vector um that you know has been
+
+00:10:06.560 --> 00:10:17.839
+pre-trained with like where these words
+are in a high dimensional latent space
+
+00:10:12.800 --> 00:10:22.720
+um and with go it is actually more
+ended, I think, than you would think
+
+00:10:19.440 --> 00:10:26.800
+because there are not necessarily
+discrete better moves. I mean, there are
+
+00:10:25.360 --> 00:10:32.320
+because there's ones that win the game,
+there's some that don't, but uh if
+
+00:10:29.839 --> 00:10:36.959
+you've ever played uh it can get to more
+of like a feel of like I feel like I've
+
+00:10:34.480 --> 00:10:42.640
+got this territory under control. Uh,
+and obviously I'm I'm not an expert
+
+00:10:40.079 --> 00:10:47.760
+player, so I I can't really speak on it
+um from an educated point, but I think
+
+00:10:45.680 --> 00:10:53.279
+that there is a little bit more nuance
+than you would imagine.
+
+00:10:50.399 --> 00:10:57.040
+Certainly more than chess.
+I played a little bit of go. It's the
+
+00:10:55.200 --> 00:11:03.360
+decision space is absolutely massive.
+Um, simpler stuff than chess, but in
+
+00:11:00.079 --> 00:11:08.000
+case you don't know, 19 by 19 grid. Um,
+that's more than four times what
+
+00:11:09.839 --> 00:11:18.800
+and you can place your stone only one
+type of piece but still
+
+00:11:16.800 --> 00:11:22.480
+I'm familiar with uh with go a little
+bit but I guess I'm thinking with words
+
+00:11:20.800 --> 00:11:27.519
+for example sometimes you're lying on
+purpose or you know you're creating I
+
+00:11:25.920 --> 00:11:31.920
+don't know JSON that makes something I
+don't know
+
+00:11:29.360 --> 00:11:36.279
+there's a certain narrowness of a game
+in terms of the
+
+00:11:38.000 --> 00:11:44.240
+U insert smart sounding words here. I
+kind of lost my train of thought. Sorry.
+
+00:11:42.079 --> 00:11:48.640
+Well, I think that's kind of what move
+37 was. It was a little bit of a big I
+
+00:11:46.480 --> 00:11:54.959
+think might be
+was the reward function um for the the
+
+00:11:51.600 --> 00:11:59.680
+system set up to reward like only on the
+winning condition at the end of the game
+
+00:11:57.120 --> 00:12:05.519
+or was it rewarding at every turn?
+Uh so that was part of the policy um
+
+00:12:03.040 --> 00:12:10.079
+structure that they had the Monte Carlo
+research.
+
+00:12:06.399 --> 00:12:13.519
+So basically every uh and also with the
+Monte Carlo research to get into a
+
+00:12:11.600 --> 00:12:18.160
+little bit more detail um that kind of
+does its own sort of like back
+
+00:12:15.040 --> 00:12:23.440
+propagation. So it'll go like 10 moves
+down a certain tree and it will see like
+
+00:12:20.959 --> 00:12:28.399
+what the outcome is or in number of
+moves down right and whatever that
+
+00:12:25.680 --> 00:12:32.480
+outcome is the policy will judge it on
+how good it is and it'll actually back
+
+00:12:30.480 --> 00:12:38.399
+propagate that up through that decision
+tree. So each that whole uh branching
+
+00:12:36.000 --> 00:12:42.160
+structure is weighted higher. So it does
+that as it goes. Yeah.
+
+00:12:39.440 --> 00:12:46.000
+And that was a trained neuronet for for
+that or was that like a deterministic? I
+
+00:12:44.240 --> 00:12:50.320
+guess the Monte Carlo wouldn't be but
+the policy net is a policy net a train
+
+00:12:49.279 --> 00:12:56.079
+neuronet.
+I'm not sure how not sure how
+
+00:12:53.680 --> 00:13:00.560
+Monte Carlo just means that some of the
+random after waiting.
+
+00:12:58.880 --> 00:13:05.680
+Yeah. Um, so
+probably just cons.
+
+00:13:02.800 --> 00:13:08.320
+Yeah. So it it basically will uh and
+there there's like different parameters
+
+00:13:06.959 --> 00:13:12.720
+you can give to it, right, of like
+there's obviously you can't look at the
+
+00:13:09.760 --> 00:13:17.200
+every single possible move and go, but
+you'll get like a set and it'll go
+
+00:13:14.399 --> 00:13:21.680
+through do the waiting prune. Um there
+will be some noise added in for like the
+
+00:13:19.040 --> 00:13:26.920
+random pruning. Um but then it will
+Yeah. And there's different algorithms
+
+00:13:23.279 --> 00:13:26.920
+for it too, right?
+
+00:13:27.040 --> 00:13:29.760
+All right.
+
+00:13:30.639 --> 00:13:45.839
+Alpha fold. Um, alpha fold is uh really
+interesting one. So um
+
+00:13:41.600 --> 00:13:50.560
+there was uh the um
+half 13 competition and I'm guessing a
+
+00:13:48.880 --> 00:13:55.200
+lot of you are probably familiar with uh
+fold at folding at home. That was part
+
+00:13:53.440 --> 00:14:02.240
+of that competition, right? that was the
+winning team for a number of years. Uh
+
+00:13:58.800 --> 00:14:05.519
+I'd have to look up how many but uh they
+they did a lot of great work with
+
+00:14:03.839 --> 00:14:10.000
+folding at home which was distributed
+computing to go through these different
+
+00:14:08.000 --> 00:14:17.760
+algorithms for folding proteins and
+figuring out the ones that work. Um
+
+00:14:14.160 --> 00:14:26.320
+and uh so
+what was it uh in 2018 Alpha Fold so it
+
+00:14:22.800 --> 00:14:33.040
+had been going on since 1994. At 2018 uh
+Alpha Fold uh was introduced and I
+
+00:14:31.279 --> 00:14:39.600
+believe that first year it got up to
+about 34 of the score of folding at
+
+00:14:36.800 --> 00:14:44.959
+home. The next year it was far
+surpassing it. Uh and graph of this it's
+
+00:14:42.639 --> 00:14:50.720
+like you know like three quarters next
+year it's like here's uh here's folding
+
+00:14:47.279 --> 00:14:57.279
+at home here's alpha the year after that
+I think it was the third year it was we
+
+00:14:52.880 --> 00:15:04.000
+had salt uh protein folding and so this
+one's really interesting because it kind
+
+00:15:00.160 --> 00:15:09.279
+of does um three different
+uh paradigms of well I'm using that word
+
+00:15:06.880 --> 00:15:15.440
+too much it does three different things
+for modeling the protein and again it
+
+00:15:13.839 --> 00:15:21.360
+kind of does a cross as attention
+between them. So you have the sequence
+
+00:15:18.000 --> 00:15:26.320
+of protein, you have the shape of it and
+then you have
+
+00:15:23.680 --> 00:15:32.160
+the relationship to other proteins that
+do similar things. So those three things
+
+00:15:29.199 --> 00:15:38.720
+are kind of the three um parts that it
+was trained on with uh being able to
+
+00:15:35.839 --> 00:15:45.120
+look across those to see like you know
+if I change uh this particular part of
+
+00:15:41.920 --> 00:15:48.000
+the sequence uh it's going to mess
+everything up because we can see that
+
+00:15:46.800 --> 00:15:56.079
+how it messed everything up in this
+other protein over here and um part of
+
+00:15:52.399 --> 00:16:02.639
+it was a geometric uh model so it
+actually had uh vector points to show
+
+00:15:59.279 --> 00:16:07.680
+the geometry of the folded protein. And
+so this uh starts to get us into
+
+00:16:06.079 --> 00:16:12.480
+uh
+geometric models which lead into world
+
+00:16:09.839 --> 00:16:17.199
+models, right? Like where you actually
+have this three-dimensional space. There
+
+00:16:14.720 --> 00:16:22.000
+can be properties within uh points on
+that space. Like I'm not a biologist,
+
+00:16:20.160 --> 00:16:25.839
+but I think with protein folding there
+is kind of a a string structure and
+
+00:16:24.320 --> 00:16:29.600
+there's flat structure. I think one of
+them is called beta something and the
+
+00:16:27.680 --> 00:16:34.079
+other one's called something else. But
+it can kind of know like the properties
+
+00:16:31.600 --> 00:16:41.920
+of each of those at each point in that
+fold. It can also then uh in kind of a
+
+00:16:38.240 --> 00:16:46.800
+latent representational space um put
+those compare those uh two different
+
+00:16:45.040 --> 00:16:52.320
+proteins together to see like what the
+differences are uh in the spatial
+
+00:16:49.680 --> 00:16:56.560
+representation of them. So, it's I mean
+it's like taking Lego blocks and and
+
+00:16:55.120 --> 00:17:02.399
+actually building something out and
+being able to compare it to another Lego
+
+00:16:59.839 --> 00:17:05.399
+truck that you made, right?
+Um,
+
+00:17:05.520 --> 00:17:14.559
+right.
+It won a Nobel Prize uh because proteins
+
+00:17:10.480 --> 00:17:20.000
+are kind of the machinery of us and all
+of these things. They shared the Nobel
+
+00:17:16.799 --> 00:17:27.280
+Prize with the um people who were
+running the holding at home function, I
+
+00:17:22.640 --> 00:17:32.240
+believe. Um but yeah, not only can it
+solve for all of the proteins that we
+
+00:17:29.840 --> 00:17:38.480
+know of, but it can make new ones as
+well. Um it can synthesize new proteins
+
+00:17:35.679 --> 00:17:45.679
+that have a high likelihood of being
+viable proteins.
+
+00:17:41.520 --> 00:17:49.600
+Any questions or discussion on that?
+Um yeah, I've never done bio. I just
+
+00:17:48.320 --> 00:17:52.799
+think it's just a really hard
+combinatorial problem though.
+
+00:17:51.360 --> 00:17:56.960
+Exactly. Yeah. It's like
+Okay.
+
+00:17:53.600 --> 00:18:02.960
+I I think the uh solving for the uh
+sequence was pretty easy, but then they
+
+00:17:59.360 --> 00:18:07.840
+realized that actually it is like actual
+physical kind of machinery and how it
+
+00:18:04.960 --> 00:18:12.160
+works. So how it's folded is very very
+important. And when they started looking
+
+00:18:10.160 --> 00:18:17.440
+into that it it was combinatorial
+explosion.
+
+00:18:14.480 --> 00:18:22.720
+And it was kind of that uh looking
+across uh the different proteins that do
+
+00:18:20.480 --> 00:18:26.880
+similar things and how they're folded
+and how they work. I think that's kind
+
+00:18:24.400 --> 00:18:34.840
+of the that was the secret blackbox
+thing that got Alpha P to really
+
+00:18:30.880 --> 00:18:34.840
+essentially solve for it.
+
+00:18:36.640 --> 00:18:45.760
+All right. Stable diffusion. Um
+so
+
+00:18:42.640 --> 00:18:52.640
+stable diffusion well so diffusion
+models first of all
+
+00:18:48.480 --> 00:18:59.200
+uh they're used for image generational a
+lot um and just to kind of give you a
+
+00:18:56.000 --> 00:19:03.280
+simple example of how they're trained
+you
+
+00:19:01.360 --> 00:19:07.200
+and uh this is not one of my areas of
+expertise I'll I'll get to my my
+
+00:19:05.760 --> 00:19:13.200
+wheelhouse when we get to the
+evolutionary stuff But you basically
+
+00:19:09.760 --> 00:19:17.200
+have an image, you add noise, Gaussian
+noise to it. What I mean by Gossian
+
+00:19:15.280 --> 00:19:22.880
+noise just
+you don't have to worry about it.
+
+00:19:19.919 --> 00:19:27.600
+Yes, static static noise um more or less
+on a Gossian a bell curve um depending
+
+00:19:26.080 --> 00:19:32.000
+on where you're at in it. So it's kind
+of randomized in that way. But yeah,
+
+00:19:30.000 --> 00:19:37.600
+you're just you're adding static to an
+image over many many different steps and
+
+00:19:34.240 --> 00:19:43.120
+you keep each one of those steps, right?
+So you know you have like the whole line
+
+00:19:39.919 --> 00:19:48.320
+of how this random noise was added which
+it's random. So at some certain point
+
+00:19:46.000 --> 00:19:55.760
+you would think if it's random how could
+you how could you get back to the
+
+00:19:51.280 --> 00:20:01.919
+original image weird right? But we found
+that if you uh actually train models on
+
+00:19:59.120 --> 00:20:08.960
+a step-by-step basis,
+giving it that static uh that most
+
+00:20:04.960 --> 00:20:13.520
+static image um knowing that you have
+generated that static image from an
+
+00:20:11.200 --> 00:20:16.559
+original image and you just show them
+like you need to get to this next one
+
+00:20:15.200 --> 00:20:19.280
+and then you need to get to this next
+one and then you need to get to this
+
+00:20:17.919 --> 00:20:24.080
+next one, next one, next one, next one
+until they get to your original and
+
+00:20:21.039 --> 00:20:29.039
+okay, you converge. Stop.
+doing that with enough images which
+
+00:20:26.320 --> 00:20:33.200
+that's a really easy process to uh do.
+you just you can get any number of you
+
+00:20:31.120 --> 00:20:39.760
+know millions of images and break them
+down in that way and then you have a
+
+00:20:36.159 --> 00:20:44.880
+model it's usually uh convolutional uh
+layers of that which not going to get
+
+00:20:41.919 --> 00:20:50.400
+into the details of that uh at least not
+during the main talk here but basically
+
+00:20:47.440 --> 00:20:54.280
+it looks over the image um I just lost
+my train now too
+
+00:20:54.320 --> 00:21:02.080
+where was I at
+this scale stuff the
+
+00:21:00.159 --> 00:21:08.159
+Yeah. Yeah. So, it can it can be used
+for a lot of different things besides
+
+00:21:04.640 --> 00:21:12.720
+just image generation. Um, and it's
+actually kind of the foundation of
+
+00:21:09.600 --> 00:21:17.440
+energy based models too. But yeah, you
+you get millions of images, you add the
+
+00:21:15.360 --> 00:21:22.000
+static to them, you train the model on
+each of these and it learns those
+
+00:21:18.960 --> 00:21:27.679
+patterns and then you can give it uh you
+can intermingle that with words and say
+
+00:21:23.919 --> 00:21:31.760
+like so you say like if I describe this
+image, it should look like this and you
+
+00:21:30.000 --> 00:21:35.840
+can take it through that entire loop,
+right? And so you eventually get to the
+
+00:21:34.000 --> 00:21:42.400
+point with image generation where you're
+like, "Give me a summer day with a blue
+
+00:21:38.960 --> 00:21:46.159
+balloon in the sky or I don't know, and
+bees flying through the air and uh
+
+00:21:44.480 --> 00:21:52.559
+there's a river off in the distance."
+And it knows to kind of uh how to
+
+00:21:49.760 --> 00:21:57.760
+generate that image from just taking
+doing it step by step, right? So it just
+
+00:21:55.120 --> 00:22:02.080
+each step at a time, it takes out a
+little bit more static and you can
+
+00:21:59.440 --> 00:22:05.840
+actually see um this process happening
+if you uh run one locally and there's
+
+00:22:04.320 --> 00:22:09.280
+some tools to like break it down. It's
+really interesting to see uh there's
+
+00:22:07.679 --> 00:22:15.120
+lots of animations out there online too
+of like how it kind of looks on the in
+
+00:22:12.000 --> 00:22:21.280
+between the intermediate steps. Um I
+remember that uh when they train them
+
+00:22:18.320 --> 00:22:26.320
+it's I was I remember reading
+that they train them based on the target
+
+00:22:23.679 --> 00:22:32.640
+image and not
+so like even though let's say they're 10
+
+00:22:29.120 --> 00:22:36.480
+steps away that they would still say
+like I want the target image and they
+
+00:22:34.880 --> 00:22:41.520
+would pass that back in rather than like
+a stepped version and what they're
+
+00:22:39.679 --> 00:22:45.039
+really trying to do I think was like
+prevent overshooting or something like
+
+00:22:43.200 --> 00:22:51.120
+that where they would like try to dial
+it in so so much all in one shot and
+
+00:22:49.120 --> 00:22:54.720
+that's where I think all the steps came
+like that they they tried to do with
+
+00:22:53.200 --> 00:22:59.039
+just like one at first like it wasn't
+really working and so they just did it
+
+00:22:56.080 --> 00:23:03.520
+in smaller increments to prevent like I
+guess overfitting the model
+
+00:23:01.600 --> 00:23:06.720
+Gota. I'm not sure about that, but that
+would make sense. That's kind of like
+
+00:23:05.039 --> 00:23:12.720
+gradient descent, right? Where you take
+one little step and you have a learning
+
+00:23:08.480 --> 00:23:18.159
+rate um each time. Um and what you might
+be talking about is uh kind of later
+
+00:23:16.080 --> 00:23:21.120
+with stable diffusion. So what I was
+describing is just kind of diffusion in
+
+00:23:20.240 --> 00:23:26.720
+general.
+Um with stable diffusion, they actually
+
+00:23:24.400 --> 00:23:31.919
+added in a lot of things to make it more
+scalable and work better. One of the
+
+00:23:28.640 --> 00:23:36.960
+things to edit in was uh to look for
+patterns. So that's where you get like
+
+00:23:34.159 --> 00:23:41.120
+the edges and the uh the vectors and
+stuff like that where it's like it it
+
+00:23:38.720 --> 00:23:46.480
+will see that pattern and it will kind
+of tuck away like how to make that
+
+00:23:43.120 --> 00:23:51.280
+pattern so that it can do that in guess
+a compressed way. That's a really bad
+
+00:23:48.559 --> 00:23:54.840
+way of saying it, but
+excuse me. Um,
+
+00:23:54.960 --> 00:24:02.159
+so I I guess to use kind of like a
+metaphor here, uh, stable diffusion, you
+
+00:23:59.520 --> 00:24:08.000
+could imagine it as you're in you're in
+a foggy forest and you can't see even
+
+00:24:05.039 --> 00:24:12.480
+like 2 feet in front of you. And, uh,
+within this forest, there is every
+
+00:24:09.919 --> 00:24:17.360
+possible image uh, you can imagine,
+right? And so, but you can't see them
+
+00:24:14.799 --> 00:24:21.520
+because they're off through the top. But
+uh what stable diffusion is, it's kind
+
+00:24:19.679 --> 00:24:25.760
+of like a compass where it's like I want
+this kind of an image and the compass
+
+00:24:23.919 --> 00:24:29.200
+will point the direction. You take a
+step there and like all right cool now
+
+00:24:27.760 --> 00:24:34.080
+go to the right a little bit. You take a
+step that way and eventually you come
+
+00:24:31.279 --> 00:24:40.799
+through the fog and you see the exact
+image that you were looking for.
+
+00:24:37.679 --> 00:24:45.919
+Do you want to explain what it means for
+the adversarial?
+
+00:24:43.120 --> 00:24:51.120
+Ah yes.
+So, uh,
+
+00:24:48.559 --> 00:24:58.120
+generative adversarial network, that's
+interesting. I thought it was, uh,
+
+00:24:54.400 --> 00:24:58.120
+whatever I said earlier,
+
+00:24:58.240 --> 00:25:06.240
+but uh,
+so whenever we first started coming out
+
+00:25:02.720 --> 00:25:10.799
+with agents, we had like one of the
+reasons why they were so powerful is
+
+00:25:08.559 --> 00:25:14.640
+that you could have one agent, it would
+check another one, right?
+
+00:25:12.880 --> 00:25:20.000
+So you could have an agent go and do a
+task like uh come up with I don't know a
+
+00:25:17.760 --> 00:25:24.159
+block of code and then another agent
+would look at that block of code even
+
+00:25:21.520 --> 00:25:29.120
+run it and be like no your code is [&nbsp;__&nbsp;]
+try again. And so they're basically
+
+00:25:26.240 --> 00:25:34.159
+going back and forth until it gets to a
+certain threshold of how good the code
+
+00:25:31.760 --> 00:25:39.919
+is and it's like all right user here's
+your code your beautiful code right so
+
+00:25:37.840 --> 00:25:46.080
+uh a generative adversarial network is
+like that but at a lower level at the
+
+00:25:42.720 --> 00:25:54.480
+actual um level of the the model layers
+itself. So what what this will look like
+
+00:25:50.320 --> 00:25:59.600
+is um there's like a a recurrent neural
+network basically meaning the output
+
+00:25:56.159 --> 00:26:05.279
+feeds back into the input. Um basically
+you add a step in there where it can
+
+00:26:02.640 --> 00:26:10.320
+judge that output before it goes back
+before it feeds back in. And there's
+
+00:26:07.440 --> 00:26:14.400
+also different types of uh adversarial
+networks too. Um like there's one where
+
+00:26:12.480 --> 00:26:18.559
+it will go it will do the full forward
+pass. What I mean by forward pass is it
+
+00:26:16.720 --> 00:26:23.520
+goes from the input of the model to the
+encoding through all the neural network
+
+00:26:21.200 --> 00:26:29.360
+decoding and actually the output step
+and then it will have another model that
+
+00:26:25.200 --> 00:26:32.799
+is like the judge. Um now
+lots of times it won't actually even
+
+00:26:30.960 --> 00:26:39.120
+decode it because it doesn't need to to
+get to like human readable thing. It'll
+
+00:26:35.600 --> 00:26:44.000
+get to that like pre uh uh decoding
+step, pass it off to that uh the
+
+00:26:42.240 --> 00:26:50.760
+adversarial part of the network which
+will judge it and give a score based on
+
+00:26:46.720 --> 00:26:50.760
+like redo it again.
+
+00:26:53.600 --> 00:26:56.600
+Sorry.
+
+00:26:57.440 --> 00:27:08.159
+Yeah. Yeah. So um and the other thing
+too is with uh gradient descent whenever
+
+00:27:04.000 --> 00:27:15.120
+you do that um that backward the back
+backwardation pass um it will go through
+
+00:27:11.120 --> 00:27:21.520
+the adversarial part as well as the main
+part. So the adversarial part will get
+
+00:27:18.080 --> 00:27:28.279
+better as the the main uh part of the
+model is better as well. So it adjusts
+
+00:27:23.520 --> 00:27:28.279
+all of the weights across the board.
+
+00:27:33.279 --> 00:27:42.720
+Uh all right, alpha proof and alpha
+geometry.
+
+00:27:38.000 --> 00:27:49.360
+So these were interesting because
+uh this was where so back in the day we
+
+00:27:46.480 --> 00:27:53.520
+had good oldfashioned symbolic AI
+meaning that it was uh
+
+00:27:51.360 --> 00:27:58.559
+so is lean like prologue. It's like a
+fact based programming.
+
+00:27:55.360 --> 00:28:02.159
+Sorry. Is lean like prologue? I've heard
+of it. Is it like prologue in that it's
+
+00:28:00.480 --> 00:28:07.960
+just like a fact based programming
+language?
+
+00:28:03.200 --> 00:28:07.960
+I'm not sure actually more like cog
+
+00:28:09.600 --> 00:28:19.080
+for uh people watching through the
+camera later who don't know.
+
+00:28:14.799 --> 00:28:19.080
+There's a program called
+
+00:28:19.520 --> 00:28:25.840
+So um
+with the symbolic AI, good old fashioned
+
+00:28:24.399 --> 00:28:31.440
+AI, right?
+Um, as Josh and I have just we had so so
+
+00:28:30.240 --> 00:28:35.120
+much discussion about like what do you
+actually call that? I think we decided
+
+00:28:32.960 --> 00:28:37.360
+like we we came down to uh algorithmic,
+right?
+
+00:28:36.399 --> 00:28:42.240
+See, I thought we were just talking
+about what we call um
+
+00:28:40.559 --> 00:28:46.159
+I don't know noni code in general which
+I I tend to call procedural but
+
+00:28:44.399 --> 00:28:49.360
+to be fair symbolic AI I wouldn't put in
+the procedural bucket.
+
+00:28:47.440 --> 00:28:54.000
+It's kind of a subset maybe
+like subset of procedural in my opinion
+
+00:28:51.600 --> 00:28:59.840
+using symbols.
+Um so whenever I say symbolic AI kind of
+
+00:28:57.440 --> 00:29:05.360
+that subset but also I'll I'll use
+algorithmic code or procedural code what
+
+00:29:02.480 --> 00:29:15.039
+I mean is your your classic like code
+ifs and loops and uh decision um control
+
+00:29:09.919 --> 00:29:18.480
+structures etc. So um
+we kind of gone away from that because
+
+00:29:16.559 --> 00:29:22.320
+we discovered neural networks and how
+good they were at all of these crazy
+
+00:29:20.240 --> 00:29:27.840
+things with machine learning.
+Uh alpha proofs and alpha geometry were
+
+00:29:25.279 --> 00:29:32.000
+kind of the return to that saying like
+wait a second there might have actually
+
+00:29:30.320 --> 00:29:38.320
+been some some stuff that we can take
+from from those lessons, right? And so
+
+00:29:35.360 --> 00:29:44.240
+what this was was essentially uh taking
+a deep neural network and this is like
+
+00:29:41.360 --> 00:29:48.000
+lots of people have done this um but
+this is kind of like one of the first
+
+00:29:45.600 --> 00:29:53.840
+ones that really like had an impact.
+taking a deep neural network using the
+
+00:29:50.399 --> 00:30:01.120
+the learning part of that and also the
+generative part of that to kind of come
+
+00:29:56.720 --> 00:30:08.880
+up with uh conscience,
+right? And then that would be fed into a
+
+00:30:04.240 --> 00:30:13.279
+procedural symbolic system to judge
+that. And the reason why this works
+
+00:30:10.880 --> 00:30:19.919
+really well is because with mathematics
+and geometry there is no
+
+00:30:17.039 --> 00:30:27.039
+have like that's maybe correct. No, it's
+it's exact, right? But you can't really
+
+00:30:24.000 --> 00:30:31.840
+uh it's the the mathematician who's
+doing research, they they develop a way
+
+00:30:29.360 --> 00:30:37.200
+to have hunches of like, okay, well,
+what if we try this, what if we try
+
+00:30:33.600 --> 00:30:43.679
+that? So, this is combining that the
+learned making a hunch part of it with
+
+00:30:40.880 --> 00:30:50.960
+the actual discrete you are right or you
+are wrong. and
+
+00:30:46.720 --> 00:30:55.440
+it it works to great effect. And yeah,
+and and this could kind of be thought of
+
+00:30:53.120 --> 00:31:00.799
+as like
+um a little bit of uh combining systems,
+
+00:30:58.559 --> 00:31:05.919
+which is essentially what we're getting
+into with agents nowadays, right? Like
+
+00:31:03.200 --> 00:31:10.799
+you're combining uh the agent harness, I
+suppose we're calling it now. um that is
+
+00:31:08.399 --> 00:31:15.720
+kind of a procedural code that is
+wrapped around model prompts.
+
+00:31:16.799 --> 00:31:22.279
+Any questions or conversation we want to
+get into there?
+
+00:31:23.120 --> 00:31:30.799
+Uh I guess have any um any big problems
+been solved for the first time uh by
+
+00:31:28.559 --> 00:31:36.960
+these narabolic systems or like at least
+any famous ones I guess?
+
+00:31:32.960 --> 00:31:41.840
+Uh yes. Um so
+one that I can think of off the top of
+
+00:31:38.880 --> 00:31:48.559
+my head is it's not alpha proof or alpha
+geometry but on the alpha series it's
+
+00:31:44.000 --> 00:31:53.799
+alpha evolve um solved for a it actually
+solved a lot of things I think it had
+
+00:31:50.480 --> 00:31:53.799
+like a
+
+00:31:54.159 --> 00:32:00.240
+don't quote me on this but I want to say
+that it was
+
+00:31:58.320 --> 00:32:06.480
+uh
+like 75% it would match the
+
+00:32:03.120 --> 00:32:11.919
+state-of-the-art solution and 20% of At
+the time it actually did better on a
+
+00:32:09.279 --> 00:32:19.840
+certain set of math problems and the one
+in particular uh was with tensors 4x4
+
+00:32:16.480 --> 00:32:27.360
+tensor uh using an algorithm developed
+by forgetting his name but um showing
+
+00:32:22.880 --> 00:32:31.519
+that uh so he got it down to I want to
+say it was 40
+
+00:32:29.519 --> 00:32:40.559
+48
+uh scalar uh scaler multiplications.
+
+00:32:36.559 --> 00:32:47.919
+to do a 4x4 to multiply a 4x4 tensor by
+a 4x4 tensor and alpha evolve I want to
+
+00:32:44.559 --> 00:32:53.039
+say got it down to 46.
+What is a tensor?
+
+00:32:49.360 --> 00:33:00.799
+A tensor is uh simply a matrix. So a
+matrix is a a tensor is the more
+
+00:32:55.679 --> 00:33:04.320
+generalized form of it. So if you have
+uh
+
+00:33:02.000 --> 00:33:07.480
+matrix
+and then
+
+00:33:08.799 --> 00:33:19.760
+so if you have like
+one three six whatever
+
+00:33:17.600 --> 00:33:27.120
+um
+this is kind of a matrix right it's a a
+
+00:33:23.360 --> 00:33:33.559
+1D matrix also known as a scalar
+and then you add another dimension to
+
+00:33:29.360 --> 00:33:33.559
+that. So
+
+00:33:41.760 --> 00:33:53.440
+you wrap all of these in brackets,
+you have a square, right? So that is a
+
+00:33:49.519 --> 00:33:58.000
+matrix. And then uh if you go to a
+threedimensional object, so imagine this
+
+00:33:55.760 --> 00:34:04.559
+goes out this way. You've got like or up
+here in threedimensional space. Uh that
+
+00:34:01.039 --> 00:34:10.800
+would be they're all tens, right? So I
+don't know I guess a cubic maybe I don't
+
+00:34:08.159 --> 00:34:15.359
+know the term for it but but both a
+scalar and uh a matrix they're all
+
+00:34:13.679 --> 00:34:22.839
+tensors. So tensors is like the
+supererset of that kind of ordered set
+
+00:34:17.679 --> 00:34:22.839
+of things on any number of dimensions.
+
+00:34:24.399 --> 00:34:27.399
+Also,
+
+00:34:30.000 --> 00:34:38.159
+I think I just misspoke. A scaler, I
+believe, is uh zero dimensions. So, it's
+
+00:34:35.200 --> 00:34:43.599
+one number and a vector is one
+dimension. Thank you. You guys need to
+
+00:34:40.480 --> 00:34:47.320
+call me out. Come on.
+All right. So
+
+00:34:53.919 --> 00:35:01.280
+all right. So excuse me. As I mentioned,
+um
+
+00:34:59.359 --> 00:35:05.440
+the the we were looking at kind of like
+stacks of patterns in the previous
+
+00:35:03.119 --> 00:35:10.320
+examples that actually produced real
+world results, Nobel prizes. Um, so
+
+00:35:08.720 --> 00:35:17.200
+we're going to dig in a little bit more
+at the specific paradigms that those
+
+00:35:13.200 --> 00:35:21.920
+facts are built on. And um, one of these
+I'm very familiar with. Some of the
+
+00:35:18.800 --> 00:35:28.720
+other ones uh, not much and speak of the
+devil.
+
+00:35:24.079 --> 00:35:33.680
+Um, evolutionary models are uh,
+interesting in that they try to
+
+00:35:32.000 --> 00:35:39.200
+replicate
+uh, evolution as it happens in the
+
+00:35:36.800 --> 00:35:46.480
+world. So natural selection and there's
+a lot of different ways we do this.
+
+00:35:42.640 --> 00:35:51.760
+So the one that I'm familiar with mostly
+is a family in
+
+00:35:49.200 --> 00:35:56.800
+who
+I I don't know how to pronounce his last
+
+00:35:53.440 --> 00:36:02.160
+name but um this is actually uh means a
+lot to me because uh back in high school
+
+00:35:59.599 --> 00:36:08.800
+whenever I started getting into this um
+it was like 2004 my junior year the
+
+00:36:06.240 --> 00:36:11.920
+thing that I came up with was genetic
+algorithms. I didn't know they were
+
+00:36:09.920 --> 00:36:17.280
+called that at the time, but that kind
+of made the most sense to me for solving
+
+00:36:14.400 --> 00:36:22.800
+an what to me was an intractable problem
+of how do you make machine learn how do
+
+00:36:20.320 --> 00:36:31.200
+you make it think
+um this comes in lots of different
+
+00:36:25.920 --> 00:36:35.880
+forms. So neat uh neural evolution uh
+for
+
+00:36:32.880 --> 00:36:35.880
+something
+
+00:36:36.720 --> 00:36:43.839
+thank you. Um this is kind of the
+architectural
+
+00:36:41.680 --> 00:36:50.960
+uh part of it where you're starting with
+a very very simple uh neural network and
+
+00:36:47.359 --> 00:36:57.599
+it builds out piece by piece. So it's
+very very foundational in that each step
+
+00:36:54.000 --> 00:37:04.960
+of that is like adding to one little bit
+at a time. And there's uh well first of
+
+00:37:02.320 --> 00:37:12.079
+all let me take a step back and explain
+what is meant by genetic algorithms. So
+
+00:37:08.880 --> 00:37:16.960
+rather than uh having one model that you
+train and do gradient descent or energy
+
+00:37:15.040 --> 00:37:22.480
+base or however you do it, you're
+basically trying you have a method of
+
+00:37:20.560 --> 00:37:27.200
+adjusting it, right? Of trying something
+new and then you have what's called a
+
+00:37:24.560 --> 00:37:33.359
+fitness function. So rather than trying
+something new once, you try something
+
+00:37:29.680 --> 00:37:39.520
+new a thousand times, right? You do like
+little permutations
+
+00:37:35.760 --> 00:37:44.160
+and uh that is your population and then
+you run all thousand of those against
+
+00:37:42.240 --> 00:37:50.160
+your fitness function which is going to
+say how good are you at doing whatever
+
+00:37:47.359 --> 00:37:55.119
+the fitness function is solving for. It
+might be predicting the next word or it
+
+00:37:52.640 --> 00:37:59.839
+might be anything you can write a
+function for, right?
+
+00:37:57.119 --> 00:38:03.599
+Um and we'll kind of come to see that
+the fitness function is really the bread
+
+00:38:02.240 --> 00:38:12.480
+and butter of any kind of an
+evolutionary system. But it judges those
+
+00:38:08.240 --> 00:38:17.760
+um in a a basian way. So probabilistic
+way of how good you did you do against
+
+00:38:15.200 --> 00:38:24.320
+the surface function. Say a score from
+zero to one a float from 0 to one. By
+
+00:38:20.240 --> 00:38:29.520
+float I mean blah blah blah whatever.
+um and it throws away all the rest. So
+
+00:38:26.880 --> 00:38:36.320
+it might keep the top 10% of the
+population or the top five or what have
+
+00:38:32.400 --> 00:38:42.160
+you. Now say you take the top 10%. So
+out of thousand you have 100. It will
+
+00:38:38.960 --> 00:38:47.520
+then mix those and this is where um a
+lot of the flavor of different
+
+00:38:43.680 --> 00:38:54.240
+methodologies come into play where you
+might have a genome which is simply a
+
+00:38:51.200 --> 00:38:59.280
+way of saying a way to encode what each
+of these models look like. Uh like
+
+00:38:57.119 --> 00:39:04.000
+here's here's the layers that could be
+considered a genome or here's the
+
+00:39:00.960 --> 00:39:09.119
+architecture that's considered a genome.
+Uh, so if you have some structured way
+
+00:39:06.720 --> 00:39:14.240
+of doing that, then you can do
+crossovers. So it's like having two
+
+00:39:11.839 --> 00:39:18.320
+horses. I don't know why I'm with
+horses, but let's go with it. Two horses
+
+00:39:16.800 --> 00:39:24.000
+that have different traits that you
+like. Um, those traits are their genome,
+
+00:39:21.359 --> 00:39:28.160
+right? Just like in biology, and you
+breed them together and you get some mix
+
+00:39:25.920 --> 00:39:35.040
+of the two.
+Uh, from there, there's other things we
+
+00:39:29.839 --> 00:39:42.079
+can do. uh for instance with regular uh
+uh populations as we go on generations
+
+00:39:38.720 --> 00:39:48.480
+uh there's mutations right so you can do
+uh random mutations on those flow what
+
+00:39:45.440 --> 00:39:52.880
+that looks like is you could say out of
+the 10% that we kept breed all of those
+
+00:39:51.359 --> 00:39:57.680
+together until you get back to a
+thousand and so that would be generation
+
+00:39:54.800 --> 00:40:03.200
+two and actually you can keep the 10%
+that were good so like you're breeding
+
+00:40:00.320 --> 00:40:08.160
+to 900 more. Um, and then out of those
+900 more that you made, let's actually
+
+00:40:05.680 --> 00:40:13.520
+mutate a certain number of those, say
+30%. So, out of those, take 30% of them
+
+00:40:11.760 --> 00:40:19.599
+and actually do random mutations, random
+pertubations. Uh, I don't think I said
+
+00:40:16.880 --> 00:40:23.520
+that right, but whatever. Um, you know,
+mess mess with them a little bit and see
+
+00:40:21.520 --> 00:40:28.079
+like what happens.
+And then we go again, we go through the
+
+00:40:25.920 --> 00:40:34.240
+business function and you rinse them and
+repeat. Now, Back in the day, this was
+
+00:40:32.000 --> 00:40:39.440
+really hard to do because we simply
+didn't have the compute. I ran into
+
+00:40:36.480 --> 00:40:45.119
+compute walls all throughout 2008 to
+like 2014 is whenever it really started
+
+00:40:43.040 --> 00:40:50.320
+like coming up to where it's like
+actually we can do this because you're
+
+00:40:47.599 --> 00:40:58.160
+not just training one model. Especially
+if you do a combination of uh gradient
+
+00:40:53.760 --> 00:41:02.960
+descent in between these uh generations,
+you're essentially training the entire
+
+00:41:00.000 --> 00:41:05.760
+population of models. So rather than
+training one, you're training a
+
+00:41:04.160 --> 00:41:08.880
+thousand.
+Now you can get around this. You can fix
+
+00:41:07.359 --> 00:41:13.760
+some programs but not training them as
+much until they get to complete
+
+00:41:10.720 --> 00:41:19.680
+convergence. And also you're getting um
+a probabilistic uh fitness from your
+
+00:41:17.280 --> 00:41:26.160
+fitness function uh if you're doing it
+right. So it's not just a you did it or
+
+00:41:22.960 --> 00:41:29.160
+you didn't. How how close did you get?
+Um,
+
+00:41:29.359 --> 00:41:36.880
+so
+there's a lot of So what what that
+
+00:41:33.760 --> 00:41:39.839
+really gets down to is uh as long as you
+can write a fitness function for
+
+00:41:38.240 --> 00:41:46.240
+something, you can kind of evolve
+something for it. Now therein lies the
+
+00:41:43.280 --> 00:41:52.160
+big strength of evolutionary approaches
+is that they can really solve for novel
+
+00:41:49.280 --> 00:41:56.000
+things. I have no idea how to make a
+program for this. Large language models
+
+00:41:54.319 --> 00:42:00.800
+are not going to help me. How in the
+hell do I solve for I don't know
+
+00:41:58.560 --> 00:42:03.440
+helicopter flight like all the different
+things of that? Well, I don't know.
+
+00:42:02.240 --> 00:42:08.000
+Throw [&nbsp;__&nbsp;] at the wall and see what
+fits. That's essentially what you're
+
+00:42:05.359 --> 00:42:13.200
+doing. um over many many many steps and
+eventually you get to a model that is
+
+00:42:09.599 --> 00:42:21.920
+like I'm very good at propeller
+aerodynamics or rotor aerodynamics or
+
+00:42:15.520 --> 00:42:26.480
+whatever come up with stuff here but uh
+cm
+
+00:42:23.680 --> 00:42:34.240
+so neat is more of uh was kind of the
+foundation of what we call NAS uh which
+
+00:42:29.839 --> 00:42:38.160
+is neural architecture search um or ENOS
+uh evolutionary neural architecture
+
+00:42:35.920 --> 00:42:42.240
+first which is building up a model from
+scratch.
+
+00:42:39.920 --> 00:42:48.960
+Uh there's a lot of other things you can
+evolve on besides the model architecture
+
+00:42:45.920 --> 00:42:54.800
+itself. Um
+and by architecture just uh so we all
+
+00:42:52.079 --> 00:42:58.160
+know I'm talking about whenever you have
+an input to a model and it goes through
+
+00:42:56.319 --> 00:43:01.520
+the model there's like layers right you
+can think of them as like walls and each
+
+00:42:59.680 --> 00:43:08.960
+one of them can have different types of
+uh neurons or perceptrons in there um so
+
+00:43:06.560 --> 00:43:12.319
+you can build up the architecture or how
+about we evolve on the weights
+
+00:43:10.400 --> 00:43:16.640
+themselves
+one of the ones that's really really
+
+00:43:14.000 --> 00:43:22.960
+popular I think overly popular right now
+is hyperparameter uh evolution and so by
+
+00:43:21.040 --> 00:43:27.920
+hyperparameters what I'm talking about
+are all of the kind of meta
+
+00:43:25.440 --> 00:43:33.200
+configurations of a model such as
+learning rate uh which learning rate in
+
+00:43:30.720 --> 00:43:37.839
+the case of faster gradient descent
+would be like how much it does how much
+
+00:43:35.920 --> 00:43:41.440
+it steps each time how much better it is
+each time because you can overshoot
+
+00:43:40.240 --> 00:43:48.960
+there's all kinds of things that can go
+wrong so finding that perfect uh
+
+00:43:44.800 --> 00:43:55.440
+learning rate is important or we could
+do any number of other hyperparameters
+
+00:43:51.359 --> 00:44:00.079
+uh like there's the um the temperature
+uh
+
+00:43:57.040 --> 00:44:04.480
+thousands of things right
+so one of these I think it's DMA yes so
+
+00:44:02.960 --> 00:44:10.400
+it takes it with a grain of salt but
+basically it does like boxes um it it
+
+00:44:08.160 --> 00:44:15.119
+makes boxes for the different
+populations and it shves uh those into
+
+00:44:12.800 --> 00:44:22.240
+the boxes and rather than uh going over
+the entire entire population. It will
+
+00:44:17.359 --> 00:44:27.359
+select subsets of the population. Um,
+another one uh that it kind of focuses
+
+00:44:24.400 --> 00:44:35.920
+on meat uh or another aspect kind of on
+meat and um and some of the other ones
+
+00:44:32.400 --> 00:44:41.760
+is uh and one of the challenges of uh
+evolutionary algorithms is trying to
+
+00:44:38.000 --> 00:44:48.000
+keep a diverse population. Now, what I
+mean by that is say you have a
+
+00:44:45.040 --> 00:44:54.720
+population of fruit flies and you're
+evolving them to uh be resistant to
+
+00:44:51.280 --> 00:45:00.079
+alcohol. A common biological experiment
+is done. Uh so say they do like one
+
+00:44:57.920 --> 00:45:05.680
+small step that is a trait that will
+make them better at being able to
+
+00:45:02.560 --> 00:45:11.359
+survive an alcoholic environment.
+um that trait, that little step that
+
+00:45:08.640 --> 00:45:16.640
+they took might not be apparent uh in
+the first generation.
+
+00:45:13.359 --> 00:45:21.359
+So it might actually have different. So
+those would get killed off even though
+
+00:45:19.920 --> 00:45:28.480
+they were kind of on their way to
+getting there. So what uh that looks
+
+00:45:24.800 --> 00:45:32.000
+like with the diversification in uh
+evolutionary approaches is essentially
+
+00:45:30.640 --> 00:45:37.680
+some sort of like protection like
+whenever you have a mutation in the
+
+00:45:34.560 --> 00:45:41.119
+population. Uh one easy example would be
+like let's keep it around for like three
+
+00:45:39.359 --> 00:45:45.680
+or four generations to see how it does
+before we just
+
+00:45:44.319 --> 00:45:51.520
+I guess what I'm saying is like how
+would you even know in that first one if
+
+00:45:47.440 --> 00:45:56.240
+it did anything? you wouldn't because
+you know it died and so if you're trying
+
+00:45:54.319 --> 00:46:00.079
+to make incremental changes to something
+even if those increments are happening
+
+00:45:58.240 --> 00:46:04.079
+you know thousands of times in iteration
+because you have all these models doing
+
+00:46:01.839 --> 00:46:08.640
+different changes I feel like if you
+don't actually see a visual a visible
+
+00:46:06.400 --> 00:46:11.359
+change in the capability you're not
+going to be able to have any
+
+00:46:09.520 --> 00:46:15.119
+deterministic understanding of what it
+actually
+
+00:46:12.640 --> 00:46:19.280
+so these are kind of hard class rules
+and what that might look like in
+
+00:46:16.480 --> 00:46:23.920
+practice is you could have a threshold
+of how much did it change, right? And if
+
+00:46:21.520 --> 00:46:26.079
+it gets over that threshold, then we
+just keep it around for three
+
+00:46:25.119 --> 00:46:31.040
+generations.
+So you have a threshold and if it change
+
+00:46:28.400 --> 00:46:35.200
+like a very small fraction of a
+percentage that's enough based on the
+
+00:46:33.200 --> 00:46:40.480
+way you're trying to understand whether
+the change you would accept it as like
+
+00:46:38.160 --> 00:46:46.160
+heat to see what happens.
+Yeah. So basically I guess kind of what
+
+00:46:42.800 --> 00:46:49.920
+it looks like if you have um
+you
+
+00:46:47.760 --> 00:46:53.599
+I this is the one approach out of the
+whole thing I've actually read about
+
+00:46:51.680 --> 00:46:58.960
+when you do need one step is is
+clustering them so that similar things
+
+00:46:56.160 --> 00:47:04.400
+in a group and then letting the fist of
+each group survive.
+
+00:47:01.359 --> 00:47:09.119
+I actually I think that's uh CMA yes is
+what you're describing.
+
+00:47:06.400 --> 00:47:12.400
+But no no that that's that is what is
+happening though. You're you're
+
+00:47:10.160 --> 00:47:16.720
+basically um kind of doing that just at
+the group level and so neat kind of did
+
+00:47:14.480 --> 00:47:20.560
+that the same way and forgetting the
+exact algorithm that they use in that
+
+00:47:19.040 --> 00:47:25.359
+but yeah it's it's that
+you might like hard code the number of
+
+00:47:22.480 --> 00:47:30.480
+clusters that you are looking at right
+yeah and so uh yeah you're jogging my
+
+00:47:28.800 --> 00:47:35.200
+memory here in
+in neat there was something it was
+
+00:47:32.560 --> 00:47:38.560
+called speciation and so and that gets
+into like what I was talking about with
+
+00:47:36.480 --> 00:47:47.119
+the threshold of difference so if you
+have like a population uh A B C you can
+
+00:47:44.000 --> 00:47:53.839
+see each of these a different species in
+that population. You go to generation
+
+00:47:49.200 --> 00:48:00.319
+two and you have a sub one, a sub 2, uh
+b sub one, b sub 2, so on so forth, c
+
+00:47:57.760 --> 00:48:06.319
+died out, but it it sucks. Um, but then
+all of a sudden with your mutation step,
+
+00:48:03.040 --> 00:48:10.240
+you get uh another one
+where whenever you compare the genomes,
+
+00:48:08.560 --> 00:48:15.520
+which say each one of these have like a
+genome like series of tags like what
+
+00:48:12.480 --> 00:48:20.319
+describes it. I guess you didn't uh a
+mutation that was big enough where if
+
+00:48:17.359 --> 00:48:25.599
+you look at the the genome like a sub
+one is pretty close to a sub 2 b sub one
+
+00:48:22.960 --> 00:48:31.839
+is pretty close to b sub two I don't
+know that right then this e thing like
+
+00:48:28.240 --> 00:48:36.800
+what the hell is that okay we don't know
+let's let's mark that and keep that guy
+
+00:48:34.319 --> 00:48:41.520
+around for two generations so that it
+doesn't die off we'll see what it does
+
+00:48:39.200 --> 00:48:47.839
+um whereas you know you go through the
+next generation you might have a
+
+00:48:45.599 --> 00:48:54.800
+A3
+A1 died off. Uh A4 A is doing pretty
+
+00:48:51.760 --> 00:48:59.440
+good. We only have B1 because B2 died
+off. But E didn't do so good, but we're
+
+00:48:57.200 --> 00:49:05.280
+still going to keep it around. So he
+stays
+
+00:49:01.359 --> 00:49:10.319
+that kind of help explain it.
+And would would the genome itself be
+
+00:49:07.680 --> 00:49:15.200
+like the layers of the network like an
+array of layers?
+
+00:49:13.119 --> 00:49:20.720
+Yes, that it could be that it's anything
+that you can kind of encode any kind of
+
+00:49:17.440 --> 00:49:26.800
+like factual representation. Um, it
+could even be like a a UID for each
+
+00:49:24.000 --> 00:49:31.359
+thing and you could have some method of
+uh modifying that UID a slight amount so
+
+00:49:29.200 --> 00:49:35.359
+that you can kind of tell the genealogy
+of the species.
+
+00:49:33.599 --> 00:49:39.680
+So then the then the next thing is the
+management of all the different clusters
+
+00:49:37.760 --> 00:49:43.839
+so that it doesn't become odorous from
+you as the person trying to conduct the
+
+00:49:41.839 --> 00:49:46.319
+experiments.
+Yeah. And so that's
+
+00:49:44.880 --> 00:49:50.240
+algorithmically right
+right that that would be like the uh
+
+00:49:47.920 --> 00:49:55.359
+keep keep the top 10%.
+That would be like the keep the top 10%
+
+00:49:52.160 --> 00:50:00.559
+or keep the top 30% or whatever and then
+you know basically mutate and breed out
+
+00:49:57.920 --> 00:50:05.200
+until you get to a certain population.
+And you bring up a good point because
+
+00:50:02.559 --> 00:50:10.160
+you could have dynamic uh population
+sizes. You could have dynamic amounts of
+
+00:50:08.559 --> 00:50:13.920
+um
+uh the population.
+
+00:50:12.400 --> 00:50:21.839
+Uh you know, all of these things could
+be more uh softer, more u dynamically uh
+
+00:50:19.200 --> 00:50:26.960
+set. And we can kind of get into that
+with the hierarchical approach um
+
+00:50:25.200 --> 00:50:31.520
+whenever we get into like the research
+talk. And if you no and if you have if
+
+00:50:29.440 --> 00:50:35.040
+you have additional clock cycles or
+whatever resource to be able to conduct
+
+00:50:33.520 --> 00:50:40.000
+this, if you wanted to try and
+potentially conduct a move 37 example,
+
+00:50:38.400 --> 00:50:45.200
+you would possibly flip it and
+algorithmically would do the other side
+
+00:50:41.920 --> 00:50:48.480
+of it that you the other percentage that
+you got rid of.
+
+00:50:46.480 --> 00:50:53.680
+Yeah. I mean, there's a lot of different
+things that you can do to kind of
+
+00:50:50.319 --> 00:51:00.559
+randomize this, right? And um
+uh
+
+00:50:56.240 --> 00:51:06.079
+so so You could do uh even different a
+different uh amount of mutation. So you
+
+00:51:03.200 --> 00:51:11.599
+could say like take these 10% and mutate
+them this much. Take these this 10%
+
+00:51:08.960 --> 00:51:16.880
+mutate them more. Take this 10% mutate
+like make them completely like wild
+
+00:51:14.480 --> 00:51:19.920
+things, right? And see what happens.
+Not to mention the the ethical
+
+00:51:18.240 --> 00:51:25.359
+considerations of having alcohol
+resistant fruit lives.
+
+00:51:22.559 --> 00:51:31.040
+That's not how we usually kill fruit.
+when when you mutate a genome in these
+
+00:51:28.640 --> 00:51:35.119
+algorithms, are you basically flipping
+one trait to the next or can you tweak
+
+00:51:33.280 --> 00:51:40.640
+one trait
+um or create a trait?
+
+00:51:38.880 --> 00:51:43.520
+So,
+it's kind of up to up to you. I mean,
+
+00:51:42.240 --> 00:51:49.040
+there's any number of ways you can do
+it. So, a good example would be like
+
+00:51:46.319 --> 00:51:52.960
+layer crossover. So if you have uh like
+you have a model and it has like say
+
+00:51:50.720 --> 00:51:56.559
+five different linear layers in this
+model and and five different linear
+
+00:51:54.640 --> 00:52:00.000
+layers in that model or say like some of
+those layers are different kinds of
+
+00:51:58.240 --> 00:52:01.520
+layers like you have a convolutional
+layer in there or whatever.
+
+00:52:01.200 --> 00:52:06.480
+Yeah.
+Whenever these two uh match together you
+
+00:52:04.400 --> 00:52:09.359
+can randomly take basically zip them
+together. You can take like layer from
+
+00:52:07.920 --> 00:52:13.200
+this one layer from that one layer from
+that one layer from this one. And that
+
+00:52:11.119 --> 00:52:18.160
+can be any number of things. It could be
+weights, just the weights or what we
+
+00:52:14.960 --> 00:52:22.000
+call the thetas of the the parameters
+and that would be basically evolving on
+
+00:52:20.559 --> 00:52:27.920
+the weights
+um or the hyperparameters like I said or
+
+00:52:25.440 --> 00:52:32.720
+the model architecture itself or any
+number of other things and when we get
+
+00:52:30.000 --> 00:52:37.280
+into the hierarchal part you can kind of
+evolve on different levels right so you
+
+00:52:34.800 --> 00:52:42.400
+can evolve the architecture at one level
+the uh hyperparameters on another level
+
+00:52:40.240 --> 00:52:49.880
+if you have like a graph neural network
+you can evolve the graph and the
+
+00:52:44.800 --> 00:52:49.880
+underlying uh layers within those nodes.
+
+00:52:50.079 --> 00:52:57.280
+Uh so in the in the natural context of
+evolution the the other species are part
+
+00:52:55.359 --> 00:53:03.680
+of the environment for each species in
+each generation for example if the if
+
+00:52:59.839 --> 00:53:07.520
+there are birds coexisting with your uh
+seed eating mammal maybe your seed
+
+00:53:05.359 --> 00:53:12.720
+eating mammal gets cooked but if there
+are no birds it's the best at getting
+
+00:53:09.040 --> 00:53:16.720
+seeds and it does well. So um so at
+least in terms of like emulating nature
+
+00:53:14.800 --> 00:53:22.880
+that would be an approach and it seems
+like most evolutionary AI methods um
+
+00:53:20.319 --> 00:53:26.800
+evaluate each individual in a generation
+independently but are there any
+
+00:53:24.240 --> 00:53:30.720
+techniques that take them or that I
+guess are there any techniques where
+
+00:53:28.960 --> 00:53:37.680
+each sample is not independent from the
+others and it's sort of mixed up? There
+
+00:53:33.599 --> 00:53:43.359
+are so for one I'm pretty sure the CMA
+ES is kind of like that if it's in the
+
+00:53:39.599 --> 00:53:49.680
+boxes but also we'll get into swarm uh
+there's swarm approaches so the swarm is
+
+00:53:46.400 --> 00:53:55.200
+very much that um
+be
+
+00:53:52.000 --> 00:54:01.839
+I think there's anyway
+there's swarm methods where um
+
+00:53:59.760 --> 00:54:06.640
+you could essentially think of it as you
+that you could think of an ant colony.
+
+00:54:05.119 --> 00:54:10.960
+And it's like, okay, well, we're going
+to take this ant colony and we're going
+
+00:54:08.400 --> 00:54:15.599
+to uh match all these ants together and
+and breed more ants and and throw away
+
+00:54:12.880 --> 00:54:19.520
+the population that sucks and keep good
+ones. Then we eventually get like a
+
+00:54:16.960 --> 00:54:25.359
+really awesome ant colony. The swarm
+method would be look at each of these
+
+00:54:22.160 --> 00:54:30.800
+ant colonies that like one level above,
+right? Which one of these ant colonies
+
+00:54:28.240 --> 00:54:36.640
+more? Okay. Well, let's keep these three
+ant colon throw away those five. So
+
+00:54:34.160 --> 00:54:41.839
+that's same thing. And the the really
+cool thing is there's no limitation to
+
+00:54:38.559 --> 00:54:47.839
+how deep you can go with that. Um and in
+the the medium article I wrote back in
+
+00:54:45.520 --> 00:54:50.880
+like 2024, I think I went over that a
+little bit where it's like we have
+
+00:54:49.359 --> 00:54:56.640
+population and then we have worlds and
+we're going to look at the world and you
+
+00:54:52.400 --> 00:55:02.240
+know multi level. So
+is that slide read by quad camp?
+
+00:55:00.000 --> 00:55:07.760
+the the last. Yeah, embarrassingly
+parallel. That phrase is what tipped me
+
+00:55:03.760 --> 00:55:10.760
+off. Claude loves saying that
+parallelism
+
+00:55:10.960 --> 00:55:16.640
+that's just like hacker newspap. I've
+heard that like chat.
+
+00:55:14.880 --> 00:55:19.040
+I don't know plot in particular. Like if
+you're talking about anything that's
+
+00:55:17.599 --> 00:55:23.280
+even a little bit parallel, it'll it'll
+whip that out like every paragraph.
+
+00:55:21.680 --> 00:55:28.160
+Sorry, that's a bit of a diversion.
+That's all right. So, also like I said,
+
+00:55:25.520 --> 00:55:31.520
+um I'll I'll give this repo out. Um,
+I'll make it public at the end of this,
+
+00:55:29.520 --> 00:55:35.440
+but I'm going to go back in and actually
+clean this up because I kind of was in a
+
+00:55:33.839 --> 00:55:38.480
+hurry, but I'll I'll go through and like
+I'll put something in the read me or
+
+00:55:37.040 --> 00:55:42.000
+whatever that says like, "All right,
+I've gone through this. It's cool."
+
+00:55:40.640 --> 00:55:45.000
+Parallel with dignity,
+right?
+
+00:55:46.319 --> 00:55:53.760
+Exactly.
+All right.
+
+00:55:51.440 --> 00:55:59.280
+Energy based model. So this one I'm not
+as familiar with but uh it's kind of
+
+00:55:57.280 --> 00:56:04.400
+like the meta representation or like
+this form thing with evolutionary things
+
+00:56:01.280 --> 00:56:09.599
+where you can think of an energy based
+model as well let's go back to a token
+
+00:56:07.760 --> 00:56:13.920
+prediction large language model right it
+predicts the next word and then it feeds
+
+00:56:12.160 --> 00:56:18.799
+that back in and predicts the next word
+so you get word word word
+
+00:56:16.640 --> 00:56:24.160
+um energy based models are more
+predicting states
+
+00:56:21.280 --> 00:56:29.359
+think of like the paragraph like how
+close is this paragraph to what a a good
+
+00:56:26.880 --> 00:56:34.559
+paragraph would look like? All right.
+Well, if we're off by this much, let's
+
+00:56:31.119 --> 00:56:38.480
+modify that paragraph to be uh a little
+bit better. And you can think of this as
+
+00:56:35.920 --> 00:56:43.680
+like an energy landscape. So, think of
+like a topographical map and you've got
+
+00:56:41.200 --> 00:56:50.720
+hills and valleys and the valleys are
+like your states that are trained to be
+
+00:56:45.920 --> 00:56:55.920
+ideal. And the uh input for that I using
+paragraph as an example but it could be
+
+00:56:53.359 --> 00:57:00.079
+anything. It could be a whole world
+model like how much does this world
+
+00:56:57.599 --> 00:57:06.880
+model make sense? every aspect of it.
+Like it could be a gigantic
+
+00:57:04.000 --> 00:57:14.400
+very very high dimensional tensor with
+like gigantic vectors, right? Um or it
+
+00:57:11.200 --> 00:57:19.839
+could be an image, right? We've got like
+this. So it could and diffusion models
+
+00:57:17.040 --> 00:57:25.359
+kind of work kind of like this actually
+pretty similar where we've got this uh
+
+00:57:23.040 --> 00:57:30.880
+static image. How much does this look
+like real life IRL? Well, Not at all.
+
+00:57:29.119 --> 00:57:34.880
+Okay. Well, let's take a step down and
+instead of like stepping down to figure
+
+00:57:32.880 --> 00:57:39.599
+out better network prediction, you're
+taking the entire state of that that
+
+00:57:37.359 --> 00:57:43.839
+two-dimensional RGB image, so really
+threedimensional, and moving it closer
+
+00:57:41.680 --> 00:57:48.160
+and closer into the valley where in the
+valleys are the actual realistic
+
+00:57:46.480 --> 00:57:53.760
+pictures.
+This could be um
+
+00:57:51.119 --> 00:57:58.480
+uh protein folding. It could be uh any
+kind of like a representation of 3D
+
+00:57:55.760 --> 00:58:04.240
+space. So the real strength of energy
+based models is that you can really wrap
+
+00:58:01.599 --> 00:58:12.160
+a lot of stuff into
+uh each step of it getting better and
+
+00:58:09.119 --> 00:58:18.079
+you're looking for the low energy uh
+solutions in that landscape.
+
+00:58:16.000 --> 00:58:25.280
+Uh
+pop network I think is the most like
+
+00:58:20.400 --> 00:58:29.040
+fundamental one. um where you're
+basically take you can think of it as
+
+00:58:26.720 --> 00:58:33.200
+like um you imagine like a piece of
+aluminum sheeting or like metal
+
+00:58:31.440 --> 00:58:36.559
+sheeting. You're taking like a ballpeen
+hammer and hitting it making big dents
+
+00:58:35.040 --> 00:58:41.440
+in it and each one of those dents is
+like here's a representation that is
+
+00:58:38.160 --> 00:58:45.359
+accurate. And so you go and you drop a
+or like a marble onto that and it'll
+
+00:58:44.160 --> 00:58:51.599
+roll around and eventually it'll roll
+down into one of those things. Right? So
+
+00:58:48.160 --> 00:58:55.680
+that's kind of a a hospital network, a
+Boltzman machine. I have no idea. I'm
+
+00:58:54.240 --> 00:59:00.880
+not familiar with that. So sorry about
+that.
+
+00:58:58.319 --> 00:59:05.359
+Uh Jeffrey Hinton,
+uh
+
+00:59:02.480 --> 00:59:13.200
+he got a Nobel Prize for his work in
+energy based models and I and award.
+
+00:59:09.760 --> 00:59:22.480
+Yeah. Yeah. Um so Jeffrey Hen is like
+one of the grandfathers of AI. Um,
+
+00:59:17.680 --> 00:59:26.559
+and was was he doing Yeah, he was doing
+he might have been involved in both of
+
+00:59:23.920 --> 00:59:33.160
+them, but he definitely
+stuff, which again, I don't know a whole
+
+00:59:28.720 --> 00:59:33.160
+lot about it, so I apologize for that.
+
+00:59:35.040 --> 00:59:43.760
+Yeah. Okay. So, any questions on that? I
+might not be able to answer them, but
+
+00:59:41.839 --> 00:59:49.680
+how how is is what they're doing
+different from like gradient descent
+
+00:59:46.400 --> 00:59:54.160
+trying to like find the
+uh I think it's really not that much
+
+00:59:52.240 --> 01:00:01.599
+different except that you're doing it on
+multiple different uh like rather than
+
+00:59:59.119 --> 01:00:06.319
+doing it token by token, it's more of
+like state by state and any number of
+
+01:00:03.760 --> 01:00:12.720
+things could be in that state. Uh you
+could have
+
+01:00:08.240 --> 01:00:18.720
+essentially like uh
+yeah and so it gets really complex and
+
+01:00:15.200 --> 01:00:23.680
+but I I guess like uh right Jeffrey
+Hinton did um he was the one that solved
+
+01:00:20.880 --> 01:00:28.799
+the algorithm for backward propagation
+uh the differential for that I'm pretty
+
+01:00:25.760 --> 01:00:33.920
+sure like 90
+yeah um and so I think it you're
+
+01:00:32.079 --> 01:00:38.880
+basically doing that gradient descent
+but you're doing it across the entire
+
+01:00:35.680 --> 01:00:44.400
+state so it's very very computer heavy.
+Um
+
+01:00:41.440 --> 01:00:48.559
+I I think you do like a a
+combination essentially like an average
+
+01:00:46.240 --> 01:00:54.400
+to get the energy level of the entire
+state once you do that. Um is it
+
+01:00:51.520 --> 01:00:58.960
+possible that gradient kind of came out
+of energy based methods like if it was
+
+01:00:56.400 --> 01:01:03.559
+like a formalization of what they
+possibly yeah I don't know.
+
+01:01:16.720 --> 01:01:24.480
+Well, I think it was him that did the
+solve for a way to efficiently do that
+
+01:01:22.000 --> 01:01:30.880
+to solve for that background using the
+differential to find the slope that was
+
+01:01:28.240 --> 01:01:35.920
+allowed for that to actually be random.
+Correct. I think that sounds great.
+
+01:01:34.240 --> 01:01:40.520
+Yeah. Yeah. At least put it together.
+But probably like the calculus or
+
+01:01:37.520 --> 01:01:40.520
+something.
+
+01:01:43.280 --> 01:01:49.359
+What the title of the paper?
+Yeah.
+
+01:01:45.599 --> 01:01:56.400
+Well, like the the evolutionary systems
+going back to those like neat that was I
+
+01:01:52.079 --> 01:02:00.160
+think 2004. Um, and I I kind of called
+that like one of the foundational pieces
+
+01:01:58.480 --> 01:02:04.720
+of it, but I think it was like the
+late60s where we actually were really
+
+01:02:02.799 --> 01:02:08.799
+first getting into genetic algorithms.
+And I don't know who all was involved in
+
+01:02:06.480 --> 01:02:13.839
+that, but a lot of these things have
+been around for a long time and they're
+
+01:02:11.359 --> 01:02:21.760
+kind of like resurfacing here and there.
+And it's like, oh yeah, well like um uh
+
+01:02:18.480 --> 01:02:25.280
+the uh transformer has been around the
+non-quadratic linear version of
+
+01:02:23.680 --> 01:02:31.839
+transformer has been around since I
+think early 70s. Um, and before that
+
+01:02:28.960 --> 01:02:38.000
+there was uh LSTM, long short-term
+memory, which that was back in like I
+
+01:02:34.640 --> 01:02:43.280
+want to say the early '7s as well. Um,
+so and we're kind of coming back around
+
+01:02:40.000 --> 01:02:46.319
+to see that with like X LFP.
+Um,
+
+01:02:45.200 --> 01:02:51.400
+yeah.
+So parallel with this
+
+01:02:54.720 --> 01:02:57.720
+approach.
+
+01:03:05.359 --> 01:03:11.119
+Yeah, I think that's whenever the uh I
+want to say his name starts with an R
+
+01:03:09.359 --> 01:03:17.839
+but like Ryan or something came up with
+the tinsert math for doing that the most
+
+01:03:14.799 --> 01:03:23.280
+uh or the the method that is was like
+the most efficient at the time that
+
+01:03:19.599 --> 01:03:29.799
+could work across any x y or any
+divisionality of I believe so Yeah,
+
+01:03:33.119 --> 01:03:40.480
+neurosolic AI.
+So this is more really just what I
+
+01:03:37.760 --> 01:03:47.359
+mentioned with the uh the alpha proof
+and alpha geometry. So it's just simply
+
+01:03:43.200 --> 01:03:53.599
+the combination of uh neural networks
+and uh symbolic algorithmic or
+
+01:03:50.160 --> 01:04:00.240
+procedural code to judge that. You can
+think of it as like uh the the neural
+
+01:03:57.599 --> 01:04:07.359
+part of it is like taking a look, seeing
+it, the hunch like what about this uh
+
+01:04:03.920 --> 01:04:11.359
+almost like coming up with a state of
+the input, right? And then you're
+
+01:04:09.119 --> 01:04:17.520
+passing that along to the symbolic
+system which is saying that's not
+
+01:04:14.160 --> 01:04:21.839
+accurate. Change how you see things or
+no that's actually pretty good. Yeah,
+
+01:04:19.359 --> 01:04:28.960
+like continue doing that. Um so this is
+just a combination of the two. Um and
+
+01:04:26.160 --> 01:04:34.720
+symbolic uh all that is meant by that is
+just like you can have a symbol for
+
+01:04:31.599 --> 01:04:39.359
+something like uh Plato's uh world of
+forms like a symbol for a triangle. This
+
+01:04:36.640 --> 01:04:43.599
+is this is the absolute perfect form of
+a triangle right that would be like a
+
+01:04:41.200 --> 01:04:50.319
+symbol. Um so it's using those the
+procedural code uh and kind of trying to
+
+01:04:48.000 --> 01:04:58.559
+make the representation that way but
+then using the neural uh the uh neural
+
+01:04:55.920 --> 01:05:08.079
+network part of it to kind of do the
+generative or like un guess part like
+
+01:05:02.799 --> 01:05:08.079
+the novel the new forms if you think
+
+01:05:11.920 --> 01:05:15.000
+All right.
+
+01:05:16.240 --> 01:05:22.960
+Honorable mentions.
+So,
+
+01:05:21.039 --> 01:05:32.240
+um
+create some trees. This is um this
+
+01:05:27.119 --> 01:05:38.640
+essentially um um trees uh
+drawing a complete blank. What's the um
+
+01:05:35.359 --> 01:05:43.160
+the tree search that I used earlier?
+Uh Monte Car
+
+01:05:43.280 --> 01:05:51.280
+is essentially Monte Carlo search.
+You're going down the decision tree and
+
+01:05:48.160 --> 01:05:58.960
+you're uh boosting the uh the ones that
+perform better and uh pruning the ones
+
+01:05:55.760 --> 01:06:04.559
+that don't getting rid of them. uh
+probabilistic and basian methods all
+
+01:06:01.520 --> 01:06:11.280
+that is is uh having probabilities for
+events. So rather than predicting the
+
+01:06:09.039 --> 01:06:16.559
+uh the next word exactly and saying like
+I mean large language models kind of do
+
+01:06:14.000 --> 01:06:21.680
+this because they'll usually have like a
+list of word predictions and the
+
+01:06:18.559 --> 01:06:25.920
+temperature will kind of uh notate how
+crazy they get with selection of that.
+
+01:06:24.160 --> 01:06:31.359
+But I guess the real thing is like
+instead of having one output, you might
+
+01:06:27.920 --> 01:06:36.720
+have 10 outputs with probabilities
+attached to each of those. Like this is
+
+01:06:33.280 --> 01:06:40.480
+the most probabilistic next state
+prediction, what have you, followed by
+
+01:06:39.280 --> 01:06:46.640
+this one, followed by this one, followed
+by this one. One of the uh shallow uh
+
+01:06:44.880 --> 01:06:50.720
+machine learning algorithms called naive
+base where it's essentially the same
+
+01:06:49.680 --> 01:06:57.680
+thing, but you're not taking the
+previous state. And so the the proper
+
+01:06:55.839 --> 01:07:03.280
+basian method can get into a
+combinatorial explosion by which I mean
+
+01:07:00.559 --> 01:07:09.280
+this is way too much way too fast uh
+exponential like trying to figure out
+
+01:07:05.760 --> 01:07:13.920
+what to do or which way to go but
+typically you'll get like probabilities
+
+01:07:12.160 --> 01:07:16.960
+and then you'll go one step further and
+get probabilities there and then you can
+
+01:07:15.440 --> 01:07:21.079
+take the average of those probabilities
+for like an actual population
+
+01:07:22.480 --> 01:07:28.760
+Oh, through all of them. So, um
+
+01:07:28.799 --> 01:07:39.200
+uh geometric and uh graph networks.
+These are interesting graph networks.
+
+01:07:36.960 --> 01:07:43.440
+So, it's essentially just adding another
+layer. Um
+
+01:07:41.760 --> 01:07:48.640
+is everybody here familiar with a graph
+with nodes? Okay.
+
+01:07:46.880 --> 01:07:54.559
+Essentially,
+you're taking
+
+01:07:50.960 --> 01:07:59.760
+uh pathways through a graph, which a
+neural network is a graph, right? But
+
+01:07:57.440 --> 01:08:05.119
+you're simply putting more into each
+node. So, you can go down a pathway to a
+
+01:08:03.440 --> 01:08:12.799
+node and within that node could be an
+entire model. uh and with current neural
+
+01:08:10.319 --> 01:08:18.239
+networks now there are sparks networks
+where not every single uh neuron or
+
+01:08:15.520 --> 01:08:22.719
+perceptron is hit there's mixture of
+experts where it actually routes uh
+
+01:08:20.719 --> 01:08:27.520
+different pathways through the model you
+could think of mixture of experts as
+
+01:08:25.359 --> 01:08:34.560
+especially spark mixture of experts as a
+a kind of sort of graph neural network
+
+01:08:30.560 --> 01:08:39.359
+in a way um because they don't have to
+hit every node like it's a linear
+
+01:08:36.480 --> 01:08:44.560
+linear layers, every single neuron is
+outputting to every single neuron. Uh
+
+01:08:42.080 --> 01:08:50.080
+it's called a dense dense network,
+right? Whereas
+
+01:08:47.520 --> 01:08:57.600
+graph neural networks, not only do they
+not have to hit every pathway, but they
+
+01:08:53.600 --> 01:09:02.319
+can be cyclic. So, uh you've got
+directed as graphs where it's always
+
+01:09:00.400 --> 01:09:07.199
+going forward, but it's not necessarily
+hitting every single pathway. uh uh you
+
+01:09:05.759 --> 01:09:12.880
+can have cyclic ones where it goes down
+the pathway and then loops back around
+
+01:09:08.719 --> 01:09:19.279
+to a previous node. And uh it's there's
+a lot of a lot of uh uh at least
+
+01:09:16.960 --> 01:09:22.799
+theoretical promise with these because
+we really think that's kind of how our
+
+01:09:20.880 --> 01:09:27.120
+human brains work, right? We've got
+different uh structures within our brain
+
+01:09:25.279 --> 01:09:31.120
+um that are responsible for different
+things and you're kind of hitting each
+
+01:09:29.040 --> 01:09:36.159
+of those in like different ways along
+this track. Um,
+
+01:09:34.799 --> 01:09:40.319
+right.
+Um,
+
+01:09:38.000 --> 01:09:46.000
+is isn't this uh one of the strategies
+that Tesla said that they're trying to
+
+01:09:42.239 --> 01:09:51.120
+use to dumb down the recent self-driving
+stuff so it can work on the the older
+
+01:09:49.440 --> 01:09:53.520
+cars because they've got like millions
+of these cars that have their older
+
+01:09:52.560 --> 01:09:57.840
+computer
+and they were worried that the new model
+
+01:09:55.280 --> 01:10:03.040
+won't fit. And so one of the things they
+started doing is they were exploring the
+
+01:10:00.000 --> 01:10:06.640
+idea of instead of looking at the whole
+thing,
+
+01:10:04.320 --> 01:10:14.719
+can you predict what part of the
+situation is worth attention
+
+01:10:09.760 --> 01:10:20.159
+and then direct your uh effort down just
+those paths. So kind of like walking a
+
+01:10:17.360 --> 01:10:24.400
+subset of the entire
+Yeah. And I I don't know about the Tesla
+
+01:10:22.239 --> 01:10:29.679
+thing. Most likely. Um I know you said
+it so I'm guessing so but I've not wrote
+
+01:10:27.440 --> 01:10:34.400
+that. You can also combine these too,
+right? Like what you're talking about an
+
+01:10:32.320 --> 01:10:41.679
+awfully lot,
+right? So like if you have graph network
+
+01:10:37.679 --> 01:10:47.000
+and you treat it as a research
+um you can have multiple hierarchies
+
+01:10:43.360 --> 01:10:47.000
+there. Well,
+
+01:10:56.320 --> 01:10:59.679
+thank you memory. All
+
+01:11:03.600 --> 01:11:13.920
+right. All right.
+So state space models are
+
+01:11:10.880 --> 01:11:18.080
+uh keeping state the entire state rather
+than um
+
+01:11:16.719 --> 01:11:23.600
+language models looking at like the
+entire like word. So like we were
+
+01:11:21.520 --> 01:11:26.719
+talking about earlier with kind of uh
+getting rid of the context each time
+
+01:11:25.199 --> 01:11:32.640
+doing a vector search to get what's
+relevant and putting that into uh just
+
+01:11:29.520 --> 01:11:38.320
+completely uh redoing the context for
+that's kind of what uh state based
+
+01:11:35.040 --> 01:11:43.520
+models do. So you can think of it as uh
+rather than looking at the entirety of
+
+01:11:41.360 --> 01:11:48.560
+the prompts and the word prediction and
+like looping that back uh over and over
+
+01:11:46.640 --> 01:11:52.239
+over again for the next word prediction,
+you're kind of like taking a look at
+
+01:11:50.239 --> 01:11:56.000
+that, taking down notes, like jotting
+down notes in like a notebook, right?
+
+01:11:54.239 --> 01:12:01.679
+And then you say, "Okay, what's next?
+Okay, well from that I've got these
+
+01:11:58.000 --> 01:12:07.600
+notes. Let's adjust my notes ever so
+slightly this way to kind of keep up
+
+01:12:03.679 --> 01:12:14.640
+with the current state of things.
+Um,
+
+01:12:09.520 --> 01:12:20.320
+active inference and free energy. Um,
+so active inference is uh was kind of
+
+01:12:17.040 --> 01:12:28.000
+the precursor to reasoning models. Uh,
+this was like back in AR AGI 2024
+
+01:12:24.560 --> 01:12:35.199
+challenge. uh
+they we were kind of working um around
+
+01:12:30.880 --> 01:12:39.520
+with doing test time inference where
+you're basically
+
+01:12:37.440 --> 01:12:43.199
+doing another level of inference as
+you're outputting. So you can think of
+
+01:12:41.360 --> 01:12:47.920
+that as like having the the reasoning
+steps that also kind of looks like a
+
+01:12:46.000 --> 01:12:52.480
+tree search, right? you're kind of going
+down different reasoning paths and then
+
+01:12:50.400 --> 01:12:56.719
+selecting which ones are best and then
+using that as kind of like an addition
+
+01:12:54.640 --> 01:13:03.440
+to the context
+as you're answering the question. So
+
+01:12:59.520 --> 01:13:09.040
+this is where reasoning models came from
+um cellular automa
+
+01:13:07.280 --> 01:13:16.000
+um
+this is very similar to um evolutionary
+
+01:13:11.760 --> 01:13:21.040
+approaches. So what it really means is
+instead of having a fitness function
+
+01:13:18.640 --> 01:13:26.640
+that is a more well- definfined thing of
+I want to get to this in state it's more
+
+01:13:24.000 --> 01:13:31.120
+of giving a world making a world an
+environment right and then seeing how
+
+01:13:29.520 --> 01:13:35.760
+like having a rule set for that
+environment and letting things evolve
+
+01:13:32.880 --> 01:13:40.159
+within that environment. So you don't
+have one fitness function. You have a
+
+01:13:37.760 --> 01:13:45.600
+whole kind of world model or like
+environment model that has a rule set uh
+
+01:13:43.360 --> 01:13:50.560
+to it of like oh this is a good thing.
+You need to go get food. Um don't touch
+
+01:13:48.400 --> 01:13:55.920
+the the red blob because that red blob
+will kill you. Um and so a lot of the
+
+01:13:53.920 --> 01:14:01.199
+evolutionary part of it is kind of
+environmental based rather than just
+
+01:13:58.719 --> 01:14:05.920
+based on the fitness function and the uh
+the result of that.
+
+01:14:03.760 --> 01:14:08.920
+and
+neuro.
+
+01:14:17.280 --> 01:14:20.920
+Yeah. Um,
+
+01:14:23.040 --> 01:14:31.040
+yeah. Um, let me get back to you on that
+because there are some really really
+
+01:14:27.360 --> 01:14:37.199
+good approaches. Um, Wolram is a big
+proponent of of this for sure. Uh, from
+
+01:14:35.040 --> 01:14:42.800
+my my home stomping grounds, I'll
+actually be seeing him. Uh, Champagne
+
+01:14:39.600 --> 01:14:45.520
+Orana. So, he's actually from a few
+different places, but
+
+01:14:43.520 --> 01:14:46.480
+Oh, he's from Champagne, Illinois.
+Yeah.
+
+01:14:46.080 --> 01:14:49.840
+Oh,
+well, not originally. I'm from further
+
+01:14:48.480 --> 01:14:55.760
+south than that, but I lived in
+Champagne uh for 11 years.
+
+01:14:54.480 --> 01:14:59.040
+there.
+Yeah,
+
+01:14:57.040 --> 01:15:06.159
+it's a pretty cool town just uh
+surrounded by cornfield. So,
+
+01:15:03.040 --> 01:15:11.920
+um but yeah, there's some really really
+interesting stuff that I've read about
+
+01:15:09.360 --> 01:15:15.440
+with the whole cellular tea and that
+sort of thing, but I can't think of it.
+
+01:15:14.320 --> 01:15:20.800
+There's actually some really good
+machine learning talk episodes on that
+
+01:15:17.920 --> 01:15:24.880
+as well. So I'm not familiar with
+cellular automa machine learning, but
+
+01:15:23.199 --> 01:15:32.000
+would it be like you're morphing the
+physics of the world that the are
+
+01:15:29.199 --> 01:15:38.320
+are like progressing through? Is that
+what you're changing?
+
+01:15:33.520 --> 01:15:41.920
+So um that would be like having a kind
+that would be like having a dynamic
+
+01:15:39.520 --> 01:15:47.360
+fitness function. So you could have a
+static uh environment and just be like I
+
+01:15:44.560 --> 01:15:51.760
+want the best thing the best uh model
+for this that can survive this
+
+01:15:49.040 --> 01:15:55.920
+environment. Um you if you were to
+mutate that environment over time that's
+
+01:15:53.920 --> 01:16:01.520
+actually a really interesting uh kind of
+novel thing. I say novel but I it's been
+
+01:16:00.159 --> 01:16:04.480
+discussed but it hasn't been looked into
+a lot. That's actually one of the things
+
+01:16:02.880 --> 01:16:09.520
+that I've gotten into with my research
+is like oh holy [&nbsp;__&nbsp;] business functions
+
+01:16:07.040 --> 01:16:13.360
+don't have to be static. We can have the
+orchestration part that changes them
+
+01:16:11.360 --> 01:16:17.280
+over time which is exactly kind of what
+that would be with the environment
+
+01:16:15.040 --> 01:16:22.159
+changing that based on any number of
+outside influence.
+
+01:16:20.000 --> 01:16:26.239
+Yeah. In normal evolution, it would have
+decided,
+
+01:16:23.360 --> 01:16:33.280
+right? Things change. Uh the the niche
+niche changes.
+
+01:16:28.480 --> 01:16:37.520
+Um you know, global warming, earthquake,
+hurricane, what you know, whatever. Like
+
+01:16:36.000 --> 01:16:43.760
+a new predator is introduced, an
+invasive species. Yeah. Um
+
+01:16:42.159 --> 01:16:49.280
+neuromorphic.
+Uh I actually don't really know anything
+
+01:16:46.400 --> 01:16:52.960
+about that. So there's an honorable
+mention. I can't really beat on as much.
+
+01:16:51.199 --> 01:16:55.920
+Does anybody know anything about
+uh I mean I don't I can't say I have any
+
+01:16:54.400 --> 01:17:00.159
+deep knowledge. I can at least toss a
+couple terms out there. Um so I know at
+
+01:16:58.800 --> 01:17:06.719
+least some of it is the notion of a
+meister which is a sort of a transistor
+
+01:17:03.600 --> 01:17:12.800
+with memory hence meister and the idea
+is that the um well a little bit like a
+
+01:17:09.760 --> 01:17:16.960
+neuron it's uh
+it activations are influenced by prior
+
+01:17:14.800 --> 01:17:19.920
+activations in such a manner. Oh again
+it's intended to resemble a neuron to
+
+01:17:18.640 --> 01:17:25.440
+some extent.
+And my understanding is that
+
+01:17:21.280 --> 01:17:29.760
+neuromorphic computers um
+well there's a variety of approaches.
+
+01:17:27.520 --> 01:17:36.560
+The one I recently heard about was using
+um
+
+01:17:31.440 --> 01:17:41.600
+a lattice of bars that didn't anyone um
+not the last term.
+
+01:17:38.880 --> 01:17:45.600
+Uh it's
+panels like solar panels.
+
+01:17:42.880 --> 01:17:51.679
+Yes, they're used in solar panels, but
+basically it's a class of uh molecules
+
+01:17:49.120 --> 01:17:55.520
+that combine in the same crystal lice
+shape that has the
+
+01:17:54.239 --> 01:18:00.400
+I'm not really a chemist. I'm not going
+to get into it, but um I have a very
+
+01:17:58.239 --> 01:18:04.560
+clear like I remember what the diagrams
+look like, but attempting to properly
+
+01:18:02.080 --> 01:18:10.159
+describe it would be beyond my ability.
+Um but essentially the the meristers are
+
+01:18:07.600 --> 01:18:14.000
+sort of it's almost like having weights
+in hardware that are influenced by
+
+01:18:11.840 --> 01:18:20.560
+activations. And I think part of the
+idea is that the in the brain um the
+
+01:18:18.159 --> 01:18:25.520
+timing of activation is very relevant
+for how a neuron gets used. And so
+
+01:18:23.760 --> 01:18:30.480
+having all of this [&nbsp;__&nbsp;] directly
+integrated into hardware is partially so
+
+01:18:29.040 --> 01:18:34.320
+in a normal computer if you give the
+same instructions or whatever you'll get
+
+01:18:31.760 --> 01:18:38.719
+the exact same stuff back out but a
+neuromorphic computer is inherently
+
+01:18:36.000 --> 01:18:43.120
+stateful because each memory inside is
+stateful right
+
+01:18:42.000 --> 01:18:46.719
+it's really interesting because it's
+almost like a graph neural network but
+
+01:18:44.880 --> 01:18:50.159
+one that where you can be doing several
+passes in parallel right but they might
+
+01:18:48.640 --> 01:18:54.800
+not be perfectly in parallel they might
+be like slightly async
+
+01:18:52.000 --> 01:18:59.520
+So depending on the outsider variables
+you can change like a computer you put a
+
+01:18:57.199 --> 01:19:04.400
+program it spits in and out the same
+thing but with a neuro neuromorphic it
+
+01:19:02.000 --> 01:19:08.560
+sounds to me like the conditions can
+change how it behaves kind of like a
+
+01:19:06.320 --> 01:19:13.760
+person or brain or something.
+Yeah I believe that is the case as for
+
+01:19:11.360 --> 01:19:17.040
+whether they can be trained
+I don't actually know how that works. I
+
+01:19:15.280 --> 01:19:22.560
+know they change with each but
+supposedly sort of u adapt but I think
+
+01:19:20.080 --> 01:19:26.239
+there is a discrete training process at
+the very beginning that works
+
+01:19:23.679 --> 01:19:29.760
+differently from um from its day-to-day
+operation but I don't really know
+
+01:19:27.760 --> 01:19:35.679
+it's almost like the analog version of
+having the different datas once
+
+01:19:33.199 --> 01:19:44.040
+differently on
+believe so
+
+01:19:38.880 --> 01:19:44.040
+seems very cool but I have not given it
+
+01:19:44.400 --> 01:19:50.239
+relatedly I uh I noticed you were
+reaching out with the hints I mentioned
+
+01:19:48.239 --> 01:19:56.480
+you had a touring award I have the paper
+download it, but I haven't read it.
+
+01:19:53.600 --> 01:20:00.640
+So, I wasn't sure if wrote that paper.
+Yeah, I've listened to a couple of talks
+
+01:19:59.120 --> 01:20:05.440
+uh
+that he's done or like interviews that
+
+01:20:02.800 --> 01:20:12.800
+he's done.
+Um I don't know like a lot of history.
+
+01:20:09.679 --> 01:20:15.800
+All right. Uh so, now we're going into a
+different
+
+01:20:17.120 --> 01:20:25.120
+kind of cool.
+All right. So, Um, for the research part
+
+01:20:22.080 --> 01:20:29.520
+of this, um, I'm going to kind of go
+into the, uh, my thoughts. And again,
+
+01:20:28.000 --> 01:20:33.360
+this is supposed to be like I wanted to
+be an open discussion. So, this it
+
+01:20:31.520 --> 01:20:40.960
+really is going to be us talking. I was
+mentioning that, uh, I kind of made some
+
+01:20:36.239 --> 01:20:48.080
+slides for this, but like no.
+So, I'm just going to kind of leave uh,
+
+01:20:45.040 --> 01:20:53.040
+this up and um, we can talk about it.
+I'll probably show some of like the data
+
+01:20:50.320 --> 01:20:58.080
+uh set that I'm using and kind of maybe
+do some backgrounding on the board of uh
+
+01:20:55.280 --> 01:21:03.600
+my thoughts on it. So to start out with,
+as I mentioned, uh the back in high
+
+01:21:02.000 --> 01:21:09.360
+school, I was kind of thinking about
+like how in the hell would you solve for
+
+01:21:07.440 --> 01:21:14.640
+uh intelligence, machine learning
+because uh thinking about the symbolic
+
+01:21:12.719 --> 01:21:20.480
+way of that we were doing things mostly
+back then like this is not scalable at
+
+01:21:17.440 --> 01:21:24.640
+all. Like you can throw uh thousands and
+thousands of uh if then statements at
+
+01:21:22.880 --> 01:21:29.199
+it. you can kind of figure out what your
+symbols are, but that's still going to
+
+01:21:26.560 --> 01:21:32.800
+be a lot more like human written code.
+It's not going to be able to scale to
+
+01:21:31.040 --> 01:21:36.800
+take into account the world model of
+this
+
+01:21:34.320 --> 01:21:42.640
+amazingly complex uh universe we live
+in, right? So, how did we get here?
+
+01:21:39.360 --> 01:21:49.600
+Well, we got here through evolution,
+arguably, but not really.
+
+01:21:46.640 --> 01:21:57.840
+So some people would argue I whatever
+each their own. Um
+
+01:21:53.199 --> 01:22:02.800
+and anyway I'm not uh so uh I started
+working on genetic algorithms. I didn't
+
+01:22:00.560 --> 01:22:09.360
+know they were called that at the time.
+And what it kind of started out with is
+
+01:22:06.000 --> 01:22:14.320
+a really really uh lame approach because
+I was not that good of a programmer back
+
+01:22:11.360 --> 01:22:21.360
+then. I was doing random permutations on
+code and compiled. Um like literally
+
+01:22:18.239 --> 01:22:28.800
+just random three mutations without any
+real direction at all. Uh eventually
+
+01:22:25.360 --> 01:22:35.280
+that turned into like oh I need some way
+to test this and uh Grammarly was
+
+01:22:31.920 --> 01:22:41.520
+actually around back then. So I started
+uh I was feeding it in uh Mariam Webster
+
+01:22:38.560 --> 01:22:46.560
+dictionary having it do mutations across
+those or like uh uh basically putting
+
+01:22:44.960 --> 01:22:50.800
+together those words and mutating the
+programs how it would put together those
+
+01:22:48.639 --> 01:22:56.560
+words and then checking it with
+Grammarly to see well for one would it
+
+01:22:53.840 --> 01:23:05.199
+even compile
+and so it was written in C and two um
+
+01:23:00.320 --> 01:23:11.600
+C++ and two um uh if it compiled, would
+it give any output at all? And then
+
+01:23:07.840 --> 01:23:16.080
+three, uh if it gave output, check that
+against Grammarly to see if it actually
+
+01:23:13.679 --> 01:23:20.800
+was made sense, if it was like
+dramatically correct, and judge it on
+
+01:23:18.639 --> 01:23:28.400
+how many mistakes there were. So those
+were kind of like my three functions. Um
+
+01:23:23.840 --> 01:23:35.120
+what I realized is that uh evolution is
+stupid um in that it does randomly
+
+01:23:33.600 --> 01:23:40.080
+mutate and if you give it millions of
+years or in this case thousands and
+
+01:23:37.600 --> 01:23:43.760
+thousands of hours of compute time it'll
+eventually get there but without any
+
+01:23:41.760 --> 01:23:53.360
+direction it's just randomly it really
+just branched up the wall see right so
+
+01:23:48.000 --> 01:23:58.400
+at that point uh I came across like Oh
+well, it makes sense to actually have
+
+01:23:55.920 --> 01:24:04.719
+some sort of like an orchestration layer
+uh an orchestrator for the evolution to
+
+01:24:01.040 --> 01:24:12.159
+kind of direct it a little bit more uh
+towards those being able to solve those
+
+01:24:07.440 --> 01:24:17.280
+functions. Uh I didn't want to use like
+a heavy hand with that orchestration
+
+01:24:14.960 --> 01:24:23.440
+because one of the ideas that I have is
+that intelligence is not necessarily
+
+01:24:20.480 --> 01:24:28.800
+uh specifically only the way that we
+think of as intelligent as humans. Um,
+
+01:24:26.800 --> 01:24:32.880
+you know, the classic example is an
+octopus.
+
+01:24:30.400 --> 01:24:37.920
+Octopuses are obviously intelligent.
+They can solve a lot of real world
+
+01:24:34.960 --> 01:24:43.520
+problems, but if you were to like look
+inside the brain of an octopus or the
+
+01:24:39.760 --> 01:24:50.440
+mini brains of an octopus and see its
+actual thoughts, they probably would not
+
+01:24:45.360 --> 01:24:50.440
+resemble human thoughts at all.
+
+01:24:59.840 --> 01:25:07.600
+Yeah. Yeah. So the the uh the arms can
+kind of work independently and it's all
+
+01:25:06.000 --> 01:25:13.360
+connected. So I guess it's all kind of
+technically one brain and also I'm not a
+
+01:25:10.080 --> 01:25:16.880
+biologist but um I'm speaking out of my
+my wheelhouse here. But yeah, it's
+
+01:25:15.520 --> 01:25:19.840
+something like that. It's it's
+definitely not a human brain, right?
+
+01:25:19.199 --> 01:25:23.600
+Okay.
+Um,
+
+01:25:21.360 --> 01:25:29.040
+and you know there's any number of other
+kinds of things that you could consider
+
+01:25:25.679 --> 01:25:33.120
+intelligent. Is is the internet
+intelligent?
+
+01:25:31.280 --> 01:25:40.400
+I mean there's a lot of information
+processing that happens there. It's made
+
+01:25:36.800 --> 01:25:46.719
+by intelligent creatures. And so uh we
+have mimemetic things that pass through
+
+01:25:42.480 --> 01:25:53.120
+the internet uh ideas uh being spawned
+created obviously driven by human uh
+
+01:25:49.440 --> 01:25:59.440
+well human and AI now but previously
+human uh creation but in this different
+
+01:25:56.639 --> 01:26:04.639
+substrate that is constantly changing
+constantly evolving in this complex
+
+01:26:01.280 --> 01:26:11.440
+system in and of itself so is that not a
+form of an intelligent system
+
+01:26:07.840 --> 01:26:17.679
+question right so the idea is that there
+are many different forms of intelligence
+
+01:26:13.280 --> 01:26:24.880
+and uh I didn't want to narrow down to
+just human intelligence.
+
+01:26:21.040 --> 01:26:29.520
+Uh going on from there after the
+orchestration part
+
+01:26:27.199 --> 01:26:37.840
+uh one of the things that I realized is
+that you can do this in hierarchies.
+
+01:26:33.360 --> 01:26:45.199
+So um what I mean by that is if you are
+evolving a species from a population to
+
+01:26:41.679 --> 01:26:49.600
+solve for a problem, why not also solve
+the world?
+
+01:26:46.960 --> 01:26:55.360
+Why not break it down into
+uh solar systems or whatever you know
+
+01:26:52.320 --> 01:27:02.719
+different uh method of uh hierarchy you
+want you want to use example but the
+
+01:26:59.120 --> 01:27:09.520
+idea is to have multiple levels of uh
+orchest multiple hierarchy for with each
+
+01:27:06.320 --> 01:27:13.520
+level evolving uh in parallel you mean
+like multiscale intelligent like a cell
+
+01:27:11.679 --> 01:27:19.520
+is intelligent in its own right but then
+it forms a tissue and tissues form an
+
+01:27:16.560 --> 01:27:24.320
+organism Exactly. And that's a very
+common way that I would think about it
+
+01:27:20.880 --> 01:27:28.800
+as in like we are intelligent systems.
+We are composed of a bunch of cells and
+
+01:27:26.239 --> 01:27:33.280
+bacteria. Um even looking back at like
+mitochondria, right? It was made by at
+
+01:27:31.520 --> 01:27:37.199
+least our best guess which we're pretty
+sure about now is it was two bacteria
+
+01:27:35.199 --> 01:27:40.639
+two protoone bacteria that merge
+together and a symbiotic relationship
+
+01:27:39.280 --> 01:27:47.639
+where they eventually fuse into one
+thing that has become fused into us as
+
+01:27:43.520 --> 01:27:47.639
+the powerhouse of cell
+
+01:27:47.760 --> 01:27:50.760
+meme.
+
+01:27:51.360 --> 01:28:02.239
+Um so yeah it's exactly that. Um
+different levels there and uh which
+
+01:27:59.600 --> 01:28:10.800
+obviously takes a lot more compute as
+well. uh kind of the the next step that
+
+01:28:05.920 --> 01:28:14.480
+I realized is that um
+uh actually what we were talking about
+
+01:28:12.239 --> 01:28:16.880
+earlier with your uh changing
+environment
+
+01:28:15.440 --> 01:28:21.199
+was that you can make the fitness
+functions dynamic
+
+01:28:18.800 --> 01:28:24.639
+uh in that you can change them over
+time. The orchestrator can be like okay
+
+01:28:23.040 --> 01:28:30.080
+now we want to go this direction that
+direction and what that solves for is
+
+01:28:27.199 --> 01:28:34.639
+generalization. um that allows uh the
+evolved model to generalize more to be
+
+01:28:32.719 --> 01:28:39.920
+able to take whatever is thrown at it.
+So you get a new a new task, a new
+
+01:28:37.280 --> 01:28:46.639
+problem and it can shift the fitness
+functions and solve for that. And then
+
+01:28:44.639 --> 01:28:54.960
+uh the next step was for me to break it
+down into parts. So what that looks like
+
+01:28:50.080 --> 01:28:59.120
+is you have you have a problem and it
+kind of can look at that problem and say
+
+01:28:56.639 --> 01:29:05.600
+do we have a solution for this problem?
+Uh no. Okay. Well, kick off the
+
+01:29:01.280 --> 01:29:11.199
+evolutionary part and so it will try to
+evolve uh
+
+01:29:08.560 --> 01:29:15.520
+like a single layer uh against that
+problem to see if it can come up with a
+
+01:29:13.280 --> 01:29:20.320
+model that will solve for it. If not
+after a certain threshold, it will break
+
+01:29:18.080 --> 01:29:25.840
+into a second hierarchy and so you build
+up those layers uh at a certain point of
+
+01:29:23.199 --> 01:29:31.920
+layers um which you can set as one of
+these hyperparameters. It will then uh
+
+01:29:28.960 --> 01:29:36.159
+say okay this is a really hard problem
+obviously. So then it will look at the
+
+01:29:33.840 --> 01:29:40.880
+problem itself and it'll break that up
+and it will make it will run the
+
+01:29:38.719 --> 01:29:46.239
+evolutionary algorithm on each part of
+that problem. And what this is solving
+
+01:29:43.440 --> 01:29:51.040
+for is uh what is commonly called
+priors. So in order to solve a problem
+
+01:29:49.040 --> 01:29:58.000
+you might need to have a given number of
+priors. Right? This might be
+
+01:29:53.840 --> 01:30:01.520
+for uh using the ARGI challenge. Uh are
+are we familiar with the ARGI challenge?
+
+01:30:00.000 --> 01:30:11.600
+Everybody?
+No. Okay. So the arci challenge is uh
+
+01:30:08.080 --> 01:30:18.239
+was made by prim
+and um
+
+01:30:14.880 --> 01:30:22.480
+are you using RKGI as a environment to
+evolve
+
+01:30:20.000 --> 01:30:29.360
+your project?
+Uh not currently and uh I will get into
+
+01:30:27.199 --> 01:30:33.040
+that in a little bit because it's kind
+of broken off into now it's kind of
+
+01:30:31.280 --> 01:30:40.560
+going to be three parts.
+Um
+
+01:30:35.760 --> 01:30:45.920
+uh oh here we go. Okay. So essentially
+you're given
+
+01:30:42.800 --> 01:30:53.280
+you're given a subset of like uh here's
+this like grid. This is for RGI1
+
+01:30:50.000 --> 01:30:57.600
+RG3 but uh you're given this grid and it
+turns into this. Given this grid, it
+
+01:30:55.360 --> 01:31:03.600
+turns into that. You're given this grid.
+What's your current state? Um so what
+
+01:31:00.639 --> 01:31:11.040
+it's meant to do is meant to have
+problems that humans can easily solve
+
+01:31:06.639 --> 01:31:18.719
+but that uh take abstract reasoning and
+priors that uh AI is find really really
+
+01:31:15.199 --> 01:31:23.760
+difficult. Uh RPGI1 that benchmark went
+for I think it was like six years with
+
+01:31:21.280 --> 01:31:29.360
+people throwing everything at it and it
+just was not able to solve.
+
+01:31:27.120 --> 01:31:34.239
+a prior in this case like there are some
+ones some some of the puzzles that solve
+
+01:31:31.520 --> 01:31:40.239
+like will demonstrate gravity for
+instance or objectness being able to
+
+01:31:37.920 --> 01:31:47.520
+differentiate one object from another.
+So that's what I mean by prior uh
+
+01:31:44.400 --> 01:31:53.120
+basically the most minuscule uh gate or
+thing that you need to solve for a
+
+01:31:50.000 --> 01:31:58.719
+certain part of the problem. So
+uh yeah, so what we're doing is we're
+
+01:31:56.080 --> 01:32:05.600
+breaking down the problem into smaller
+uh uh atomic pieces of that problem and
+
+01:32:02.880 --> 01:32:11.280
+we're evolving a model for each of those
+uh more simplistic things to solve and
+
+01:32:08.159 --> 01:32:15.199
+then we are doing an ensemble of those
+mini models plugging them together into
+
+01:32:13.520 --> 01:32:22.800
+a chain that will solve each part of
+that problem. Uh and now what we do from
+
+01:32:19.199 --> 01:32:27.280
+what I do from there is once we get that
+ensemble
+
+01:32:24.480 --> 01:32:31.360
+uh which eventually ends up looking kind
+of like a graph neural network because
+
+01:32:28.800 --> 01:32:36.320
+it can have each layer of the hierarchy
+in the evolutionary system will
+
+01:32:33.440 --> 01:32:42.480
+essentially be like a node um or like a
+graph and then the level below it will
+
+01:32:38.560 --> 01:32:49.679
+be a node of that graph. um we kind of
+take that pack it into a known solution
+
+01:32:46.560 --> 01:32:55.199
+and we put that into a DSL of different
+solution. So it kind of looks like
+
+01:32:51.199 --> 01:33:00.639
+program synthesis but with these evolved
+little mini models. Um that's the idea
+
+01:32:58.560 --> 01:33:08.159
+anyway. Haven't quite gotten there yet.
+Um because I realized that
+
+01:33:04.080 --> 01:33:14.480
+one of the main problems with that is
+that it doesn't have good knowledge
+
+01:33:11.440 --> 01:33:22.719
+representation in in work in other words
+it doesn't have a good world model so
+
+01:33:17.840 --> 01:33:31.199
+that's where I broke out uh al also like
+in all my years of doing this um I
+
+01:33:26.400 --> 01:33:36.639
+didn't realize that uh modern uh large
+language models and most models the
+
+01:33:33.920 --> 01:33:40.800
+encoding layer is part of the model as a
+whole. Now
+
+01:33:39.520 --> 01:33:45.040
+I'm going to put that on pause for a
+second because we're going to get back
+
+01:33:41.840 --> 01:33:51.760
+to that for Nexus. I'm forgetting one
+important part of the whole like
+
+01:33:47.840 --> 01:33:59.360
+evolutionary approach that span going
+over the years. It was around like 2009
+
+01:33:55.440 --> 01:34:08.480
+to 2011 or so that I first discovered uh
+neural networks. Uh the first one was um
+
+01:34:05.600 --> 01:34:11.480
+forget the name of it was library before
+TensorFlowJS.
+
+01:34:11.760 --> 01:34:18.120
+What's that?
+ReinforceJS or
+
+01:34:14.320 --> 01:34:18.120
+no? Um
+
+01:34:19.360 --> 01:34:25.040
+I I'll get back to that uh at some point
+if I can't remember it. But anyway, I
+
+01:34:23.360 --> 01:34:29.760
+found neural networks and I'm like, "Oh,
+this is like a whole new thing. This is
+
+01:34:26.639 --> 01:34:36.480
+crazy. like I can mesh this into my
+symbolic uh and algorithmic approach and
+
+01:34:34.239 --> 01:34:40.639
+have kind of soften the edges of it a
+little bit. Um so that's where I
+
+01:34:39.280 --> 01:34:47.199
+actually started seeing a lot more
+progress is using those uh neural
+
+01:34:43.760 --> 01:34:51.920
+networks as the evolved pieces rather
+than shifting around actual like pieces
+
+01:34:49.440 --> 01:34:54.960
+of code.
+And so
+
+01:34:54.239 --> 01:35:00.560
+uh
+so so you you're evol you have you're
+
+01:34:58.159 --> 01:35:05.440
+evolving little models that could solve
+like like one model might solve that
+
+01:35:02.239 --> 01:35:10.000
+another one might solve another arc AGI
+puzzle and then somehow orchestrating
+
+01:35:07.679 --> 01:35:14.320
+them together to kind of coordinate who
+solves what and when.
+
+01:35:11.840 --> 01:35:19.199
+Is that am I understanding that right?
+So like you might have like a total
+
+01:35:16.880 --> 01:35:26.400
+model that that can solve just about
+anything. assuming you've trained enough
+
+01:35:22.400 --> 01:35:32.480
+of these like smaller scale models kind
+of like so for like one level of the
+
+01:35:30.320 --> 01:35:35.360
+hierarchy like we'll call it the third
+level
+
+01:35:33.520 --> 01:35:40.239
+um yes that would be the case of like
+this is the one that is like evolving
+
+01:35:37.199 --> 01:35:46.000
+models um with these underlying
+hierarchies or collections of models for
+
+01:35:43.120 --> 01:35:50.000
+the ARGI composition as a whole then one
+level below that it would be like per
+
+01:35:48.480 --> 01:35:54.080
+problem
+like in this case uh taking into account
+
+01:35:52.480 --> 01:35:58.239
+like all of these and then one level
+below that this is a pretty simplistic
+
+01:35:56.320 --> 01:36:01.440
+one of the ARPI challenges
+but the the lowest level might be
+
+01:36:00.000 --> 01:36:05.840
+actually like taking and looking at
+these like uh square by square being
+
+01:36:04.320 --> 01:36:09.520
+like what changed in this one what
+changed in that one change in that one
+
+01:36:07.760 --> 01:36:13.679
+and I also tried out like some
+metalarning strategies and doing weird
+
+01:36:12.159 --> 01:36:19.360
+things where I was like taking these and
+making a threedimensional space out of
+
+01:36:15.280 --> 01:36:23.679
+them and looking at that uh basically uh
+taking these and like stacking them
+
+01:36:20.639 --> 01:36:27.600
+together and doing 3D convolution over
+that
+
+01:36:24.560 --> 01:36:32.880
+for like metalarning and all kinds of
+weird experimentation. But yeah,
+
+01:36:30.400 --> 01:36:37.199
+essentially like it would be you you
+break down the problems wherever you see
+
+01:36:34.400 --> 01:36:41.679
+fit too and that is kind of where the
+human judgment comes in a little bit and
+
+01:36:39.040 --> 01:36:46.159
+kind of uh the manipulation of that
+orchestrator orchestrator or
+
+01:36:44.000 --> 01:36:51.280
+orchestrator. what what are you using to
+like perceive the problem like the
+
+01:36:48.719 --> 01:36:55.360
+perception layer? Um, and I guess the
+perception layer could be the
+
+01:36:52.960 --> 01:37:00.239
+orchestrator or could feed into the
+orchestrator, but when when you see a
+
+01:36:57.600 --> 01:37:04.000
+problem, what how are you passing that
+in to the system?
+
+01:37:02.239 --> 01:37:08.719
+So, you're actually touching on the
+exact problem that I ran into, okay,
+
+01:37:06.080 --> 01:37:13.520
+is creating the world model.
+Um, and so that's going to be where we
+
+01:37:11.360 --> 01:37:18.880
+get into Nexus, which we can jump into
+now. The role model is like what problem
+
+01:37:16.639 --> 01:37:22.400
+the capability is trying to solve,
+right? It's like identifying who the
+
+01:37:20.560 --> 01:37:27.760
+characters are, what the actors are, the
+setting and the pro the problem set that
+
+01:37:24.960 --> 01:37:34.719
+the capability is trying to
+provide answers to.
+
+01:37:29.679 --> 01:37:40.000
+All of the above except for the uh the
+problems the solutions of what it's
+
+01:37:37.440 --> 01:37:45.679
+trying to solve for. Now there's a lot
+of nuance in this answer because a lot
+
+01:37:42.960 --> 01:37:53.199
+of world mod like vja
+um are trying to predict uh the next
+
+01:37:49.199 --> 01:37:59.360
+thing um so whereas what I'm doing is
+not necessarily uh taskbased or task
+
+01:37:56.480 --> 01:38:04.080
+oriented other than
+placing other than the knowledge
+
+01:38:01.040 --> 01:38:09.440
+representation um basically placing that
+in the vector space in the proper way
+
+01:38:06.560 --> 01:38:13.679
+across modalities where uh everything
+involving that concept is pointing to
+
+01:38:11.600 --> 01:38:18.719
+the same place which I can get into how
+the decoder. You're you're encoding.
+
+01:38:15.840 --> 01:38:24.560
+Yeah. And and so that's kind of what I
+was getting into where I realized that
+
+01:38:21.520 --> 01:38:30.719
+the encoding layer uh is a part of these
+models and that makes sense because
+
+01:38:27.760 --> 01:38:36.400
+or it has one major pro in that the
+encoder gets better as the model gets
+
+01:38:33.520 --> 01:38:41.440
+better because the encoder itself is
+part of the back propagation. Right? So
+
+01:38:39.360 --> 01:38:45.600
+if it encodes something the wrong way
+and it produces the wrong model output
+
+01:38:43.840 --> 01:38:50.800
+as you do the backward propagation, it's
+adjusting the weights of all of the four
+
+01:38:48.320 --> 01:38:58.159
+task levels layers of that model but
+also the encoder itself.
+
+01:38:53.600 --> 01:39:03.679
+So if you split the encoder apart from
+the model, you lose that because the
+
+01:39:00.800 --> 01:39:10.560
+encoder doesn't get any better if the
+model's wrong. But you can make just the
+
+01:39:07.760 --> 01:39:15.520
+code, right? And so that's what nexus
+gets into where I'm like, all right,
+
+01:39:13.119 --> 01:39:21.280
+let's keep this completely separate. And
+you actually, this is all hypothesis
+
+01:39:18.400 --> 01:39:27.840
+now. Um, but you get a lot more pros
+than cons uh of doing that. For
+
+01:39:24.080 --> 01:39:33.679
+instance, you can hypothetically train a
+lot of task oriented models downstream
+
+01:39:31.199 --> 01:39:39.520
+of the world model that are all using
+that world model as the filter where
+
+01:39:36.560 --> 01:39:42.080
+they all kind of have um the same
+substrate. We talked about this on
+
+01:39:40.800 --> 01:39:45.760
+Discord a little bit.
+They all kind of have the same
+
+01:39:43.360 --> 01:39:49.040
+substrate, shared substrate that they
+are the same language they're speaking,
+
+01:39:48.000 --> 01:39:55.199
+right?
+without having to encode decode from uh
+
+01:39:52.719 --> 01:40:00.639
+language tokens into sensors and back
+and forth. Yeah. Um and so that's
+
+01:39:58.880 --> 01:40:03.639
+actually what I'm working on right now
+is
+
+01:40:05.679 --> 01:40:13.040
+are you starting from a pre-trained
+encoder encoding model and then doing
+
+01:40:10.800 --> 01:40:18.320
+like a on top of it or are you starting
+from like are you training from scratch?
+
+01:40:15.840 --> 01:40:24.639
+Training from scratch. So and the reason
+for that is because I'm uh doing a
+
+01:40:21.360 --> 01:40:29.520
+neural architecture search from uh like
+I'm not only going to do uh the
+
+01:40:27.920 --> 01:40:36.400
+evolutionary approach with the task
+oriented uh models but I'm also using
+
+01:40:33.119 --> 01:40:41.199
+that for the uh the encoder itself. So
+that's what you saw where I was taking
+
+01:40:37.920 --> 01:40:50.280
+out uh different layers and kind of
+intermixing them. Um,
+
+01:40:46.000 --> 01:40:50.280
+and so
+
+01:40:58.159 --> 01:41:04.000
+here's the data set that I'm going off
+of.
+
+01:41:02.560 --> 01:41:09.679
+That's really hard to see with the uh
+the black background, but if you go on
+
+01:41:06.960 --> 01:41:16.800
+to hugging face and look for Nexus
+temporal hierarchical multimodal
+
+01:41:12.639 --> 01:41:22.800
+uh you'll get this and essentially
+a terabyte of data.
+
+01:41:19.840 --> 01:41:29.040
+It's like 542 gigs.
+So this is derived from 2,00 uh videos
+
+01:41:26.639 --> 01:41:34.800
+from hugging based fine video.
+Okay. And uh what I've done is I've gone
+
+01:41:32.719 --> 01:41:45.159
+through and broken this piece down into
+temporal steps. So right here, I wish
+
+01:41:39.679 --> 01:41:45.159
+this was not cut off. Um but
+
+01:42:22.880 --> 01:42:26.199
+You're a part.
+
+01:42:32.159 --> 01:42:38.400
+So
+we've got
+
+01:42:36.400 --> 01:42:46.239
+slices.
+Uh this is at the lowest level. And so
+
+01:42:42.400 --> 01:42:52.080
+you can see that we have um
+uh the video ID is more of like metadata
+
+01:42:49.600 --> 01:42:57.520
+and then we've got an index start
+millisecond. Um, and as you can see,
+
+01:42:54.480 --> 01:43:03.520
+these are 10 millisecond slices. And we
+have the audio, we have, uh, the index
+
+01:43:00.400 --> 01:43:11.199
+of the frame, uh, and the index of all
+of these, uh, experience, minutes, text,
+
+01:43:07.760 --> 01:43:15.040
+uh, imu for acceleration, uh, GPS, temp,
+humidity. And so this is what I was
+
+01:43:13.119 --> 01:43:19.520
+talking about with it being extensible,
+uh, to be across any number of
+
+01:43:16.960 --> 01:43:26.000
+modalities that you want to be. Um,
+obviously we don't have data for this
+
+01:43:21.040 --> 01:43:30.400
+right now, but uh I used the uh Montreal
+force aligner as part of the process of
+
+01:43:28.719 --> 01:43:39.440
+breaking down these videos. So basically
+I'm breaking it down into uh each frame
+
+01:43:34.719 --> 01:43:44.239
+and getting the uh the 16 bits uh audio
+from
+
+01:43:41.280 --> 01:43:51.360
+from that 10 milliseconds
+right here. And then uh I I don't think
+
+01:43:48.800 --> 01:43:54.639
+we're even at the the phone part yet,
+but breaking the words down into the
+
+01:43:53.600 --> 01:43:57.679
+phone names.
+Yeah.
+
+01:43:54.960 --> 01:44:05.040
+And then as you go up in levels, so we
+go from uh slices like moments.
+
+01:44:02.480 --> 01:44:10.480
+Um and you can see these are 100
+milliseconds each and then up into
+
+01:44:08.880 --> 01:44:14.639
+seconds
+which are obviously a second each up
+
+01:44:12.960 --> 01:44:21.760
+into
+uh experiences in seconds
+
+01:44:18.639 --> 01:44:26.920
+so on so forth. And then if we look at
+the
+
+01:44:23.360 --> 01:44:26.920
+let me get my
+
+01:44:27.440 --> 01:44:31.000
+let me get my
+
+01:44:37.119 --> 01:44:40.119
+Yes.
+
+01:44:42.480 --> 01:44:45.480
+Monad.
+
+01:44:48.159 --> 01:44:53.920
+Um
+I thought it was a play on Nomad.
+
+01:44:51.920 --> 01:45:01.440
+So
+that but also there is a a function
+
+01:44:58.560 --> 01:45:01.440
+program.
+
+01:45:07.119 --> 01:45:10.679
+I think you're right.
+
+01:45:11.520 --> 01:45:14.920
+Okay. Whatever.
+
+01:45:39.679 --> 01:45:46.600
+All right. So,
+oh, hey, it's already on the
+
+01:45:49.440 --> 01:45:56.080
+So, I broke it down into that data set,
+but as we can see here, um, it's
+
+01:45:54.800 --> 01:46:05.639
+actually
+uh it goes higher than just minutes. So
+
+01:46:01.760 --> 01:46:05.639
+it will go through
+
+01:46:07.520 --> 01:46:14.800
+from slice to moment to experience
+episode to hour to day to year to
+
+01:46:12.480 --> 01:46:20.400
+decline.
+And each of these uh is tied together so
+
+01:46:17.679 --> 01:46:22.960
+that it really is tree structure. You
+can think of it as like at the very
+
+01:46:21.760 --> 01:46:28.000
+bottom you've got all these like 10
+millisecond slices and then above that
+
+01:46:25.199 --> 01:46:31.119
+with a link down uh to each of them
+you've got the next level up so on so
+
+01:46:29.840 --> 01:46:35.560
+forth.
+So where did you find the thousand years
+
+01:46:37.199 --> 01:46:49.360
+right? Uh oh yeah yeah I gotcha. Um so
+we don't have that much video yet but
+
+01:46:46.239 --> 01:46:53.679
+the idea is to um it's going to be
+representing making knowledge
+
+01:46:50.800 --> 01:46:59.119
+representations across this scale. So
+everything is going to be in the like
+
+01:46:56.400 --> 01:47:03.520
+millennial millennium is going to be
+well really century is but like it's
+
+01:47:02.000 --> 01:47:09.520
+going to all have hyperplanes going
+across all of it right so this is kind
+
+01:47:06.320 --> 01:47:13.040
+of like like I have the modalities as
+extensible where we can have uh
+
+01:47:12.080 --> 01:47:18.400
+it's ambition.
+It's ambition. Yeah. It's it's it's
+
+01:47:14.880 --> 01:47:22.960
+future proofing. Um
+uh and it's just to kind of complete the
+
+01:47:20.080 --> 01:47:28.639
+link like you know ideally this would go
+up to you know heat death of the
+
+01:47:24.560 --> 01:47:35.440
+universe but or big rip or big crunch
+but forever.
+
+01:47:30.880 --> 01:47:42.080
+Yeah. Um but the idea is that we are
+basically taking these
+
+01:47:38.080 --> 01:47:45.080
+uh architecture choices
+which
+
+01:47:53.119 --> 01:47:57.639
+it's been like since February since I
+
+01:48:12.400 --> 01:48:23.960
+Yeah. So, I guess it is kind of these.
+So, like we've got a bunch of different
+
+01:48:17.600 --> 01:48:23.960
+uh kind of network pieces um
+
+01:48:32.639 --> 01:48:40.400
+well, whatever. But, um basically It's
+going through like this selection of
+
+01:48:38.239 --> 01:48:46.320
+different layers and it's just randomly
+plugging those together and seeing how
+
+01:48:41.840 --> 01:48:52.800
+it does. And the idea is to um basically
+line up if you have um something like an
+
+01:48:50.880 --> 01:49:00.800
+apple,
+you have uh the word apple written out a
+
+01:48:56.800 --> 01:49:05.840
+ple. You've got uh the word spoken, the
+sound apple. You got pictures of apples,
+
+01:49:03.679 --> 01:49:10.800
+images of apples, the sound of whenever
+you crunch into it. Uh, all of these
+
+01:49:08.639 --> 01:49:15.360
+kind of should point to the concept of
+Apple.
+
+01:49:11.920 --> 01:49:21.920
+And so what it's doing is it's evolving
+and judging on um how well it can relate
+
+01:49:19.840 --> 01:49:27.920
+different pieces across that temporal
+tree to say like, oh, these like 10
+
+01:49:24.719 --> 01:49:32.960
+slices uh relate to this moment, relate
+to this experience, so on so forth up
+
+01:49:30.480 --> 01:49:40.159
+the tree. And that creates a hyper plane
+through that temporal structure of uh a
+
+01:49:37.440 --> 01:49:46.320
+relationship or relation which we can
+see here. Um and there's a few different
+
+01:49:42.800 --> 01:49:53.520
+ones that I have kind of predefined um
+where we have like uh
+
+01:49:50.480 --> 01:50:00.080
+causal is like
+you you eat an apple and then it becomes
+
+01:49:56.159 --> 01:50:07.360
+eaten, right? Or whatever. Um
+compositional would be uh like apple and
+
+01:50:03.280 --> 01:50:14.239
+apple tree and apple seed and so on so
+forth. Um bobing for apple.
+
+01:50:11.600 --> 01:50:19.920
+Yeah. Yeah. Um would be kind of like an
+association, right? But it goes through
+
+01:50:17.199 --> 01:50:26.400
+and it makes these uh these this hyper
+plane of relations relations between the
+
+01:50:22.800 --> 01:50:31.760
+different uh nodes in the temporal tree
+where uh
+
+01:50:28.480 --> 01:50:35.840
+each one and each relationship can be a
+combination of those nodes in the
+
+01:50:34.000 --> 01:50:42.000
+temporal tree, but it can also have
+relationships in it as well. like you'll
+
+01:50:37.760 --> 01:50:46.239
+see um um
+um so okay so if there's like a slice
+
+01:50:44.159 --> 01:50:52.639
+that captures like the first phone of
+apple like someone's starting to say it
+
+01:50:49.679 --> 01:50:59.280
+are you saying like the the encode
+encoded vector of that should be
+
+01:50:56.320 --> 01:51:07.760
+somewhere close to the word apple that
+might be captured in like a moment or a
+
+01:51:03.119 --> 01:51:11.760
+um could be but because going to look
+across all these different modalities.
+
+01:51:10.080 --> 01:51:17.360
+Um, it is actually going to have like
+the frame of the video in there as well.
+
+01:51:14.960 --> 01:51:22.560
+So, if it looks at that same phone name
+and it doesn't see anything like an
+
+01:51:19.119 --> 01:51:29.440
+apple in the frame,
+uh, it can actually down uh down that to
+
+01:51:27.840 --> 01:51:32.960
+where it's like, okay, this is the same
+phone, but it's not the same, like it's
+
+01:51:31.920 --> 01:51:37.440
+not going to create a relationship
+between that and uh the other ones that
+
+01:51:35.760 --> 01:51:43.920
+are Apple
+and actually there's the relationship is
+
+01:51:40.400 --> 01:51:50.639
+a whole um kind of like intermediary
+uh step in between that the different
+
+01:51:47.599 --> 01:52:00.080
+parts of the temporal tree and the final
+thing which is the concept concepts.
+
+01:51:55.119 --> 01:52:04.800
+So concept is a collection of concepts
+and relationships. So it can have a
+
+01:52:02.080 --> 01:52:10.320
+concept can have concepts of it in
+itself but also relationship pointers.
+
+01:52:08.400 --> 01:52:17.199
+And so you can think of all this as like
+um
+
+01:52:12.800 --> 01:52:24.119
+a uh link list of
+know basically
+
+01:52:19.920 --> 01:52:24.119
+uh a hierarchy of links.
+
+01:52:25.040 --> 01:52:34.159
+And so uh
+basically I'm thinking that
+
+01:52:31.520 --> 01:52:40.880
+once we get once I get to this being
+like well done and kind of explored I'll
+
+01:52:38.320 --> 01:52:45.679
+be able to use this as that filter to
+have taskbased
+
+01:52:42.960 --> 01:52:51.040
+uh evolutionary models following the
+same kind of algorithmic approach that I
+
+01:52:48.560 --> 01:52:55.599
+uh was describing where I can break down
+problems time prior have a solution set
+
+01:52:53.440 --> 01:53:00.320
+of uh different preassembled
+pre-ensembled
+
+01:52:57.280 --> 01:53:04.960
+uh solutions and all of that put
+together I think is going to be the very
+
+01:53:02.719 --> 01:53:10.719
+beginning of a good foundation for me to
+start looking into consciousness
+
+01:53:08.639 --> 01:53:16.560
+because I'll have an actual real
+underlying representation of what the
+
+01:53:13.280 --> 01:53:22.159
+world is. all have evolved models which
+could be any manner of intelligence not
+
+01:53:19.119 --> 01:53:26.719
+human defined uh to kind of solve for
+those things and from there I think we
+
+01:53:24.960 --> 01:53:34.199
+can start looking into how to wrap that
+into like now observe yourself how do we
+
+01:53:31.199 --> 01:53:34.199
+create
+
+01:53:35.760 --> 01:53:42.080
+anyway
+so okay so I'm still trying to
+
+01:53:40.159 --> 01:53:49.040
+understand like the temporal aspects
+here um So like like the slice would be
+
+01:53:46.480 --> 01:53:55.599
+one level of link twist and the moment
+would be another level of link twist and
+
+01:53:52.639 --> 01:54:02.960
+and then you have like a like hyper
+planning almost of of that going through
+
+01:53:58.960 --> 01:54:09.040
+longer segments of time. Um yes so the
+slices are definitely a link list. The
+
+01:54:05.599 --> 01:54:14.400
+uh the moments are also link list but
+they also have pointers. So each moment
+
+01:54:11.280 --> 01:54:18.880
+is going to have pointers to the slices
+below it and they can also have
+
+01:54:16.400 --> 01:54:24.239
+additional data as well. So like you've
+got the phone at that level and then you
+
+01:54:21.440 --> 01:54:28.320
+go up and you eventually get to like um
+seconds and you'll have words and then
+
+01:54:25.920 --> 01:54:32.719
+you go up to experiences and whole
+sentences you know as kind of like an
+
+01:54:30.560 --> 01:54:36.159
+additional layer. And so that's where it
+can actually make those relationships
+
+01:54:34.000 --> 01:54:43.119
+between like here is a sentence that
+involves the actual apple and it's going
+
+01:54:38.639 --> 01:54:49.679
+to be related to that a phone or a
+And then we've got this other one that
+
+01:54:45.119 --> 01:54:55.280
+has the same or but we're talking about
+um Apollo mission, right? So that's
+
+01:54:52.800 --> 01:54:59.760
+probably not related and it's through
+that it can kind of figure out like okay
+
+01:54:57.920 --> 01:55:03.119
+these two phones even though they're the
+same are not actually there's no
+
+01:55:02.000 --> 01:55:07.440
+relationship there.
+Yeah.
+
+01:55:04.639 --> 01:55:14.480
+And is um the structure of the data set
+where they they reference like through
+
+01:55:10.080 --> 01:55:19.679
+like temporally down um is that is that
+so you can train a single encoder and
+
+01:55:17.280 --> 01:55:26.400
+keep like the representation of of the
+idea or the concept
+
+01:55:22.960 --> 01:55:29.520
+in multiple scales of time or um are you
+training like a separate encoder for
+
+01:55:27.920 --> 01:55:32.560
+each scale?
+Uh there's I've tried different ways.
+
+01:55:32.159 --> 01:55:38.080
+Okay.
+Um That's a great question. Uh I've
+
+01:55:35.280 --> 01:55:43.760
+tried both ways. I think right now as I
+have it, it is actually a single encoder
+
+01:55:40.239 --> 01:55:50.320
+that will take the entire so uh as a
+slice comes in, it will actually look
+
+01:55:46.159 --> 01:55:56.239
+all the way up the tree um to and
+basically do an encoding for that entire
+
+01:55:52.960 --> 01:56:02.239
+line from line down through the
+single slice. Um, and it actually Yeah,
+
+01:56:00.480 --> 01:56:08.400
+because I I have it to where like it
+know like um it I actually had to do a
+
+01:56:06.000 --> 01:56:12.480
+recursive function to know whenever it's
+going to go from like one moment to the
+
+01:56:10.159 --> 01:56:17.880
+next and then from one experience to the
+next to be able to kind of line this up.
+
+01:56:19.119 --> 01:56:24.480
+Whenever I get this finished, by the
+way, this is all going to be part of the
+
+01:56:21.920 --> 01:56:27.480
+paper and open source, but right now is
+not.
+
+01:56:27.760 --> 01:56:36.199
+When I work on stuff like this, I find
+that
+
+01:56:32.159 --> 01:56:36.199
+the nuance differ.
+
+01:56:41.679 --> 01:56:48.800
+I'm looking at this model that you have
+highlighted for example
+
+01:56:45.520 --> 01:56:55.760
+whatever type uh you have strength and
+confidence
+
+01:56:50.639 --> 01:57:01.360
+in your mind. Why do you have two versus
+uh one concept like what makes one
+
+01:56:58.400 --> 01:57:07.920
+different from the other
+if it's an experiment just you know
+
+01:57:04.400 --> 01:57:14.400
+yeah I'm I'm thinking back to doing that
+um trying to remember it's been since
+
+01:57:10.880 --> 01:57:17.400
+like February I worked on this
+um
+
+01:57:21.119 --> 01:57:26.639
+not sure
+I can take the code
+
+01:57:27.679 --> 01:57:33.840
+You don't have to curious because like
+those are the hard questions for me.
+
+01:57:31.440 --> 01:57:38.880
+It's like the meaning of a word as I'm
+like trying to build a model because the
+
+01:57:35.760 --> 01:57:44.639
+model is a simple stage. And so if I'm
+simplifying it, that's where I feel like
+
+01:57:42.159 --> 01:57:49.760
+I have to get hyper clear about what it
+is I'm exactly trying to express.
+
+01:57:46.639 --> 01:57:54.239
+Could it uh could it have been that um
+strength would like a strength of zero
+
+01:57:51.920 --> 01:57:58.239
+and confidence of one would mean I am
+positive that these two things are not
+
+01:57:55.760 --> 01:58:04.639
+at all related? Strength one.
+Yeah. Like so so strength is like
+
+01:58:02.560 --> 01:58:11.199
+how strong that like pathway is between
+the two and then the confidence I would
+
+01:58:07.360 --> 01:58:16.480
+be like how sure you are of that
+and I I think I that's used in the
+
+01:58:13.520 --> 01:58:20.400
+confidence if you okay yeah so I think
+the strength is used in the structure if
+
+01:58:18.239 --> 01:58:25.880
+I'm remembering right and the confidence
+is actually used uh to store kind of the
+
+01:58:22.880 --> 01:58:25.880
+result
+
+01:58:27.119 --> 01:58:33.840
+right I'm actually going to be diving
+into this over the next two days and to
+
+01:58:31.920 --> 01:58:37.599
+try to get this all wrapped up and done
+so at that point if you ask me I'll be
+
+01:58:35.760 --> 01:58:41.760
+able to tell
+after your trip.
+
+01:58:39.119 --> 01:58:46.480
+Well, before my trip is uh so I'm going
+to try to get it finished um over this
+
+01:58:44.159 --> 01:58:51.480
+long weekend that we have so that it's
+ready to go for whenever I fly out on
+
+01:58:52.800 --> 01:58:56.920
+Yeah. Well, I have to figure that
+
+01:59:01.360 --> 01:59:04.360
+on.
+
+01:59:05.360 --> 01:59:15.119
+Sorry.
+Yeah, hopefully. Um, I'm not going to be
+
+01:59:10.000 --> 01:59:19.760
+presenting on it. I'm going to um
+call it an assembly. And I don't really
+
+01:59:17.760 --> 01:59:26.800
+know what to expect yet because it's the
+first one of its kind, but uh it's we're
+
+01:59:24.719 --> 01:59:31.920
+going to be kind of
+completing uh some formalization into
+
+01:59:29.760 --> 01:59:37.440
+the study of machine consciousness
+research and
+
+01:59:34.800 --> 01:59:45.000
+um I'm thinking that's going to be more
+like working groups more than just
+
+01:59:39.760 --> 01:59:45.000
+speakers. Uh I'm not sure.
+
+01:59:47.440 --> 01:59:52.560
+All right,
+that's all I got.
+
